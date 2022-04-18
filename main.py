@@ -120,7 +120,7 @@ def get_info_data(token, info, week, week_count, student_id, class_name, class_c
         else:
             data[order_reflect[course]] = data.pop(course)
 
-    if len(data) > 3:
+    if len(data) > 3 and token != None:
         return {
             "token": token,
             "title":"课表小助手提醒",
