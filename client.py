@@ -1,7 +1,7 @@
 import os
 import requests
 import hashlib
-
+from HP import host, port
 os.chdir(os.path.dirname(__file__))
 
 class App:
@@ -78,7 +78,7 @@ class App:
             'user_id': user_id,
             'hs': hs,
             }
-        r = requests.post(url='http://124.156.210.60:6703/get_personal_info', json=data).json()
+        r = requests.post(url='http://{}:{}/get_personal_info'.format(host, port), json=data).json()
         if 'error' in r:
             print(r['error'])
         else:
@@ -96,13 +96,13 @@ class App:
         self.hs = self.set_hash(user_id, user_password)
         self.user_id = user_id
         self.email_address = email_address
-        r = requests.post('http://124.156.210.60:6703/is_email_exist', json={'user_id': self.user_id}).json()
+        r = requests.post('http://{}:{}/is_email_exist'.format(host, port), json={'user_id': self.user_id}).json()
         if 'error' in r:
             print(r['error'])
             return None
-        requests.post('http://124.156.210.60:6703/send_security_code', json={'email':self.email_address})
+        requests.post('http://{}:{}/send_security_code'.format(host, port), json={'email':self.email_address})
         sc = input('请输入验证码:')
-        r = requests.post('http://124.156.210.60:6703/email_check', json={'email':self.email_address,'sc': sc, 'user_id': self.user_id}).json()
+        r = requests.post('http://{}:{}/email_check'.format(host, port), json={'email':self.email_address,'sc': sc, 'user_id': self.user_id}).json()
         if 'error' in r:
             print(r['error'])
             return None
@@ -170,12 +170,12 @@ if __name__ == '__main__':
                     'hs': app.hs,
                     'file': app.file,
                 }
-                r = requests.post('http://124.156.210.60:6703/push_personal_info', json=data).json()
+                r = requests.post('http://{}:{}/push_personal_info'.format(host, port), json=data).json()
                 if 'error' in r:
                     print(r['error'])
                 else:
                     print(r['msg'])
-                    r = requests.post('http://124.156.210.60:6703/start_one', json={'user_info': '{}-{}.json'.format(app.user_id, app.hs)}).json()
+                    r = requests.post('http://{}:{}/start_one'.format(host, port), json={'user_info': '{}-{}.json'.format(app.user_id, app.hs)}).json()
                     if 'error' in r:
                         print(r['error'])
                     else:
@@ -183,11 +183,11 @@ if __name__ == '__main__':
             elif command == '5':
                 user_id = input('重置密码的账号(学号):')
                 email_address = input('账号(学号)绑定的邮箱:')
-                r = requests.post('http://124.156.210.60:6703/is_email_exist', json={'user_id':user_id}).json()
+                r = requests.post('http://{}:{}/is_email_exist'.format(host, port), json={'user_id':user_id}).json()
                 if 'error' in r:
-                    requests.post('http://124.156.210.60:6703/send_security_code', json={'email':email_address})
+                    requests.post('http://{}:{}/send_security_code'.format(host, port), json={'email':email_address})
                     sc = input('请输入验证码:')
-                    r = requests.post('http://124.156.210.60:6703/email_check', json={'email':email_address, 'sc':sc, 'user_id': user_id}).json()
+                    r = requests.post('http://{}:{}/email_check'.format(host, port), json={'email':email_address, 'sc':sc, 'user_id': user_id}).json()
                     if 'error' in r:
                         print(r['error'])
                     else:
@@ -199,7 +199,7 @@ if __name__ == '__main__':
                                 app.hs = app.set_hash(user_id, pwd1)
                                 app.user_id = user_id
                                 app.email_address = email_address
-                                r = requests.post('http://124.156.210.60:6703/reset', json={'hs':app.hs, 'sc':sc, 'user_id': user_id, 'email':email_address}).json()
+                                r = requests.post('http://{}:{}/reset'.format(host, port), json={'hs':app.hs, 'sc':sc, 'user_id': user_id, 'email':email_address}).json()
                                 with open('config.py', 'w', encoding='utf-8') as f:
                                     f.write('hs="{}"\nuser_id="{}"\nemail_address="{}"'.format(app.hs, app.user_id, app.email_address))
                                 print(r['msg'])

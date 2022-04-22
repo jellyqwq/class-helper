@@ -15,13 +15,15 @@ log.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s',
     level=log.INFO,
     datefmt='%Y-%m-%d %H:%M:%S')
-os.makedirs('./email', exist_ok=True)
+os.makedirs('./email/', exist_ok=True)
+os.makedirs('./user_config/', exist_ok=True)
 
 security_code = {}
 
 def send_email(email, content):
     #qq邮箱smtp服务器
-    host_server = ''
+    host_server = 'smtp.qq.com'
+    #sender_qq为发件人的qq号码
     sender_qq = ''
     #pwd为qq邮箱的授权码
     pwd = ''
@@ -135,12 +137,15 @@ def send_security_code():
 
 @app.route('/email_check', methods=['POST'])
 def email_check():
-    try:
+    # try:
         email = request.json['email']
         sc = request.json['sc']
         user_id = request.json['user_id']
         for k, v in security_code.items():
             if v[email] == sc:
+                if not os.path.exists('./email/{}.txt'.format(user_id)):
+                    file = open('./email/{}.txt'.format(user_id), 'w+', encoding='utf-8')
+                    file.close()
                 with open('./email/{}.txt'.format(user_id), 'r+', encoding='utf-8') as f:
                     f.seek(0)
                     if email == f.read():
@@ -153,9 +158,9 @@ def email_check():
                 return json.dumps({'msg': 'succeed'})
         log.error('验证码错误')
         return json.dumps({'error': '验证码错误'})
-    except:
-        log.error('验证码验证失败')
-        return json.dumps({'error': '验证码验证失败'})
+    # except:
+    #     log.error('验证码验证失败')
+    #     return json.dumps({'error': '验证码验证失败'})
 
 @app.route('/reset', methods=['POST'])
 def userid_email():
