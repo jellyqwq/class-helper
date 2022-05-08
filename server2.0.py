@@ -96,27 +96,37 @@ def signup():
     password = request.json['pwd']
     sc = request.json['sc']
     for k, v in security_code.items():
-        
-    # 仅当collection为空时可以直接写入
-    if not DBEXIST and not COLEXIST:
-        result = mycol.insert_one({
-            "name": name,
-            "email": email,
-            "password": password,
-        })
-        log.info('sign up info writed successfully: %s' % result)
-        return json.dumps({'success': 0})
-    # count_documents()可以计算指定元素的出现次数
-    elif mycol.count_documents({'email':email}):
-        log.info('email is exist')
-        return json.dumps({'error': 'email is exist'})
-    else:
-        mycol.insert_one({'name':name, 'email':email, 'password':password})
-        log.info('account created successfully\nname: %s\nemail: %s\npassword: %s' % (name, email, password))
-    
+        if v[email] == sc:
+            # 仅当collection为空时可以直接写入
+            if not DBEXIST and not COLEXIST:
+                result = mycol.insert_one({
+                    "name": name,
+                    "email": email,
+                    "password": password,
+                })
+                log.info('sign up info writed successfully: %s' % result)
+                del security_code[k]
+                return json.dumps({'success': 0})
+            # count_documents()可以计算指定元素的出现次数
+            elif mycol.count_documents({'email':email}):
+                log.info('email is exist')
+                return json.dumps({'error': 'email is exist'})
+            else:
+                mycol.insert_one({
+                    'name':name, 
+                    'email':email, 
+                    'password':password,
+                })
+                log.info('account created successfully\nname: %s\nemail: %s\npassword: %s' % (name, email, password))
+                del security_code[k]
+                return json.dumps({'success': 0})
 # 验证码
 @app.route('/sendvcode', methods=['POST'])
 def sendvcode():
+    # count_documents()可以计算指定元素的出现次数
+    if mycol.count_documents({'email':email}):
+        log.info('email %s was already signed up' % email)
+        return json.dumps({'error': 'email was already signed up'})
     t = time.time()
     if security_code != {}: 
         for i in security_code.keys():
