@@ -1,6 +1,6 @@
 import random
 import pymongo
-from flask import Flask, request
+from flask import Flask, jsonify, request
 import logging as log
 import json
 import time
@@ -87,7 +87,7 @@ def send_email(email, content):
     smtp.sendmail(sender_qq_mail, receiver, msg.as_string())
     smtp.quit()
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 # 注册
 @app.route('/users/signup', methods=['POST'])
 def signup():
@@ -138,3 +138,15 @@ def sendvcode():
     security_code[time.time()] = {email:content}
     log.info('verification code sent successfully')
     return json.dumps({'succeed': 0})
+
+@app.route('/')
+
+@app.route('/test', methods=['POST'])
+def test():
+    log.info(request.content_type)
+    email = request.json['email']
+    log.info(email)
+    return json.dumps({'succeed': 0})
+
+if __name__ == '__main__':
+    app.run(host='localhost', port=4443, debug=True)

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册</title>
+    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("button").click(function(e){
+                e.preventDefault()
+                $.post("http://localhost:4443/test",
+                {
+                    email: $('#email').val(),
+                },
+                function addData(data, jqXHR){
+                    console.log(data)
+                    console.log(jqXHR)
+                    // alert("Data Loaded: " + data['succeed'])
+                },
+                "json")
+            })
+        })
+    </script>
+</head>
+<body>
+    <form action="http://localhost:4443/test" method="POST" enctype="multipart/form-data">
+        <input type="text" name="email" id="email" id="info" placeholder="请输入邮箱">
+        <span id="sp1"></span>
+        <button>发送验证码</button>
+        <input type="submit" value="提交">
+    </form>
+</body>
+</html>
