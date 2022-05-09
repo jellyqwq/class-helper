@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>class helper login</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.js"></script>
+    <script>
+        // https://segmentfault.com/q/1010000009407374
+        $(document).ready(function() {
+            $("#login").click(function(e){
+                e.preventDefault();
+                $.post('http://localhost:4443/test',
+                    {
+                        'email': $("#email").val(),
+                        'pwd': $("#pwd").val()
+                    },
+                    function(data, jqXHR) {
+                        console.log(data+jqXHR);
+                    }
+                )
+            })
+            
+            
+        })
+    </script>
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data">
+        邮箱: <input type="text" name="" id="email" placeholder="请输入邮箱" maxlength="25"><br>
+        密码: <input type="text" name="" id="pwd" placeholder="请输入密码" maxlength="25" minlength="6"><br>
+        <button id="login">登录</button>
+    </form>
+</body>
+</html>

@@ -1,13 +1,16 @@
 import random
 import pymongo
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 import logging as log
 import json
 import time
+import os
 
 from email.mime.text import MIMEText
 from email.header import Header
 from smtplib import SMTP_SSL
+
+os.chdir(os.path.dirname(__file__))
 
 # 读取配置文件
 with open("example.config.json", "r", encoding="utf-8") as f:
@@ -16,7 +19,7 @@ with open("example.config.json", "r", encoding="utf-8") as f:
 # 设置输出日志格式以及等级
 log.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s',
-    level=log.INFO,
+    level=log.DEBUG,
     datefmt='%Y-%m-%d %H:%M:%S')
 
 # 初始化数据库,建立数据库对象
@@ -88,6 +91,7 @@ def send_email(email, content):
     smtp.quit()
 
 app = Flask(__name__, template_folder='templates')
+import class_helper.views
 # 注册
 @app.route('/users/signup', methods=['POST'])
 def signup():
@@ -139,14 +143,18 @@ def sendvcode():
     log.info('verification code sent successfully')
     return json.dumps({'succeed': 0})
 
-@app.route('/')
-
 @app.route('/test', methods=['POST'])
 def test():
-    log.info(request.content_type)
-    email = request.json['email']
-    log.info(email)
-    return json.dumps({'succeed': 0})
+    log.debug(request.content_type)
+    email = request.form['email']
+    log.debug(email)
+    pwd = request.form['pwd']
+    log.debug(pwd)
+    return jsonify({'succeed': 0})
+
+
+
+
 
 if __name__ == '__main__':
     app.run(host='localhost', port=4443, debug=True)
