@@ -12,26 +12,91 @@
         $(document).ready(function() {
             $("#login").click(function(e){
                 e.preventDefault();
+
+                // post
                 $.post('http://localhost:4443/test',
                     {
                         'email': $("#email").val(),
                         'pwd': $("#pwd").val()
                     },
-                    function(data, jqXHR) {
-                        console.log(data+jqXHR);
+                    function(data) {
+                        alert(data['succeed']);
+                        console.log(data);
                     }
                 )
             })
-            
-            
         })
     </script>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        .main-box {
+            display: flex;
+            /* justify-content: center; */
+            /* align-items: center; */
+            background-color: rgb(26, 164, 202);
+            flex-direction: column;
+            height: auto;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            border-radius: 0.8em;
+        }
+        .title {
+            margin:0.5em;
+            font-style: italic;
+            color: rgb(255, 255, 255);
+        }
+        .ep-box {
+            margin: 0 2em;
+        }
+        p {
+            font-size: 1.5em;
+            margin-right: 0.7em; 
+        }
+        input {
+            min-width: 15em;
+            min-height: 1em;
+            
+        }
+        .flex {
+            background-color: rgb(63, 129, 45);
+            display: flex;
+            margin: 1.5em;
+            padding: 0.2em;
+            white-space: nowrap;
+        }
+        button {
+            margin: 0.2em;
+            margin-right: 0.3em; 
+        }
+        input {
+            outline: none;
+        }
+    </style>
 </head>
 <body>
-    <form method="post" enctype="multipart/form-data">
-        邮箱: <input type="text" name="" id="email" placeholder="请输入邮箱" maxlength="25"><br>
-        密码: <input type="text" name="" id="pwd" placeholder="请输入密码" maxlength="25" minlength="6"><br>
-        <button id="login">登录</button>
-    </form>
+    <div class="main-box">
+        <h1 class="title">Class Helper</h1>
+        <div class="ep-box">
+            <div class="flex">
+                <p>邮箱:</p>
+                <input type="text" name="" id="email" placeholder="请输入邮箱" maxlength="25"><br>
+            </div>
+            <div class="flex">
+                <p>密码:</p>
+                <input type="text" name="" id="pwd" placeholder="请输入密码" maxlength="25" minlength="6"><br>
+            </div>
+            <div class="flex">
+                <button id="login" class="login">登录</button>
+                <button id="forget" class="forget">忘记密码</button>
+                <button id="signup" class="signup">注册</button>
+            </div>
+        </div>
+    </div>
+    
 </body>
 </html>

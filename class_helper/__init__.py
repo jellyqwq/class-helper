@@ -1,6 +1,6 @@
 import random
 import pymongo
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, make_response
 import logging as log
 import json
 import time
@@ -90,6 +90,12 @@ def send_email(email, content):
     smtp.sendmail(sender_qq_mail, receiver, msg.as_string())
     smtp.quit()
 
+# 请求头的设置
+def res(params):
+    response = make_response(params)
+    response.access_control_allow_origin = 'http://127.0.0.1:4443'
+    return response
+
 app = Flask(__name__, template_folder='templates')
 import class_helper.views
 # 注册
@@ -150,11 +156,7 @@ def test():
     log.debug(email)
     pwd = request.form['pwd']
     log.debug(pwd)
-    return jsonify({'succeed': 0})
-
-
-
-
+    return res({'succeed': '返回成功'})
 
 if __name__ == '__main__':
     app.run(host='localhost', port=4443, debug=True)
