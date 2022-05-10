@@ -7,11 +7,15 @@ def index():
     log.debug(cookie)
     if cookie == {}:
         # cookie为空登录页面
-        return res(render_template('index.html'))
+        return res(render_template('login.html'))
     elif 'sh' in cookie.keys():
         # sh在cookie当中则提取sh并从数据库提取相关信息并生成表单
         sh = cookie['sh']
-        mycol.find({'sh'})
-        return render_template('index.html')
+        log.debug('sh: %s', sh)
+        count = mycol.count_documents({'cookie':sh})
+        if count == 0:
+            return res(render_template('login.html'))
+        else:
+             return res(render_template('config.html'))
     else:
         return res(render_template('login.html'))

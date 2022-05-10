@@ -11,72 +11,30 @@
         // https://segmentfault.com/q/1010000009407374
         $(document).ready(function() {
             $("#login").click(function(e){
-                e.preventDefault();
-
+                // e.preventDefault();
                 // post
-                $.post('http://localhost:4443/test',
+                $.post('http://localhost:4443/users/login',
                     {
                         'email': $("#email").val(),
                         'pwd': $("#pwd").val()
                     },
                     function(data) {
-                        alert(data['succeed']);
-                        console.log(data);
+                        console.log(data)
+                        if (data.hasOwnProperty('error')) {
+                            console.log(data['error']);
+                        }
+                        else
+                        {
+                            $(location).attr('href', 'http://localhost:4443/');
+                            console.log(data);
+                        } 
                     }
                 )
             })
         })
     </script>
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-        }
-        .main-box {
-            display: flex;
-            /* justify-content: center; */
-            /* align-items: center; */
-            background-color: rgb(26, 164, 202);
-            flex-direction: column;
-            height: auto;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%,-50%);
-            border-radius: 0.8em;
-        }
-        .title {
-            margin:0.5em;
-            font-style: italic;
-            color: rgb(255, 255, 255);
-        }
-        .ep-box {
-            margin: 0 2em;
-        }
-        p {
-            font-size: 1.5em;
-            margin-right: 0.7em; 
-        }
-        input {
-            min-width: 15em;
-            min-height: 1em;
-            
-        }
-        .flex {
-            background-color: rgb(63, 129, 45);
-            display: flex;
-            margin: 1.5em;
-            padding: 0.2em;
-            white-space: nowrap;
-        }
-        button {
-            margin: 0.2em;
-            margin-right: 0.3em; 
-        }
-        input {
-            outline: none;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'login.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/login.css">
 </head>
 <body>
     <div class="main-box">
@@ -90,7 +48,7 @@
                 <p>密码:</p>
                 <input type="text" name="" id="pwd" placeholder="请输入密码" maxlength="25" minlength="6"><br>
             </div>
-            <div class="flex">
+            <div class="flex label">
                 <button id="login" class="login">登录</button>
                 <button id="forget" class="forget">忘记密码</button>
                 <button id="signup" class="signup">注册</button>

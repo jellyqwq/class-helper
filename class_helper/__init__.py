@@ -1,10 +1,13 @@
+from calendar import c
+import imp
 import random
 import pymongo
-from flask import Flask, jsonify, render_template, request, make_response
+from flask import Flask, render_template, request, make_response
 import logging as log
 import json
 import time
 import os
+import hashlib
 
 from email.mime.text import MIMEText
 from email.header import Header
@@ -91,7 +94,7 @@ def send_email(email, content):
     smtp.quit()
 
 # 请求头的设置
-def res(params):
+def res(params: str | dict | None):
     response = make_response(params)
     response.access_control_allow_origin = 'http://127.0.0.1:4443'
     return response
@@ -130,6 +133,7 @@ def signup():
                 log.info('account created successfully\nname: %s\nemail: %s\npassword: %s' % (name, email, password))
                 del security_code[k]
                 return json.dumps({'success': 0})
+
 # 验证码
 @app.route('/sendvcode', methods=['POST'])
 def sendvcode():
@@ -148,6 +152,48 @@ def sendvcode():
     security_code[time.time()] = {email:content}
     log.info('verification code sent successfully')
     return json.dumps({'succeed': 0})
+
+# 登录
+@app.route('/users/login', methods=['POST'])
+def login():
+    log.debug(request.content_type)
+    email = request.form['email']
+    log.debug("email: %s" % email)
+    pwd = request.form['pwd']
+    log.debug("password: %s" % pwd)
+    if email != '':
+        count = mycol.count_documents({'email':email})
+        log.debug("count: %d" % count)
+        if count == 0:
+            log.error('Email %s is unavailable' % email)
+            return res({'error': '邮箱不存在'})
+        if pwd != '':
+            d = mycol.find_one({'email':email})
+            log.debug("d: %s" % d)
+            if d['password'] == pwd:
+                old_hash = d['cookie']
+                temp_str = old_hash + str(time.time())
+                new_hash = hashlib.sha256(temp_str.encode('utf-8')).hexdigest()
+                result = mycol.update_one({"_id": d['_id']}, {"$set": { "cookie": new_hash}})
+                log.debug(result)
+                response = res(render_template('config.html'))
+                response.set_cookie('sh', new_hash, max_age=86400)
+                return response
+            else:
+                return res({'error': '密码错误'})
+        else:
+            log.error('Password %s can\'t be empty' % pwd)
+            return res({'error': '密码不能为空'})
+    else:
+        log.error('Email %s can\'t be empty' % email)
+        return res({'error': '邮箱不能为空'})
+
+# 退出登录-删除cookie
+@app.route('/users/logout', methods=['POST'])
+def logout():
+    response = res(render_template('login.html'))
+    response.delete_cookie('sh')
+    return response
 
 @app.route('/test', methods=['POST'])
 def test():
