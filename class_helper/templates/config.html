@@ -79,7 +79,61 @@
                     }
                 )
             })
-        })
+        });
+
+        // 回车登录
+        $(document).keyup(function(event){
+            if (event.keyCode == 13) {
+                $("#submit").click(function(){
+                    // 判断每个复选框的状态
+                    if ($('#pushplus').is(':checked')) {
+                        var switch_pushplus = true
+                    }
+                    else
+                    {
+                        var switch_pushplus = false
+                    }
+                    if ($('#telegram').is(':checked')) {
+                        var switch_telegram = true
+                    }
+                    else
+                    {
+                        var switch_telegram = false
+                    }
+                    if ($('#weather').is(':checked')) {
+                        var switch_weather = true
+                    }
+                    else
+                    {
+                        var switch_weather = false
+                    }
+                    
+                    // 提交内容
+                    $.post('http://{{ host }}:{{ port }}/submit',
+                        {
+                            'name': $("#user_name").val(),
+                            'openid': $("#openid").val(),
+                            'xh': $("#xh").val(),
+                            'pushplustoken': $("#pushplustoken").val(),
+                            'tgtoken': $("#tgtoken").val(),
+                            'tg_user_id' : $("#tg_user_id").val(),
+                            'switch_pushplus' : switch_pushplus,
+                            'switch_telegram': switch_telegram,
+                            'switch_weather': switch_weather
+                        },
+                        function (data) {
+                            if (data.hasOwnProperty('error')) {
+                                alert(data.error)
+                            }
+                            else
+                            {
+                                alert(data['result'])
+                            }
+                        }
+                    )
+                })
+            }
+        });
     </script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'config.css') }}">
     <link rel="stylesheet" type="text/css" href="../static/config.css">
