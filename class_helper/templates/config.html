@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>class helper setting</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery-1.7.2.js') }}"></script>
+    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery/jquery-1.7.2.js"></script>
     <script>
+        // 登出
         $(document).ready(function() {
             $("#logout").click(function(){
                 $.post('http://{{ host }}:{{ port }}/users/logout',
@@ -22,6 +24,58 @@
                             $(location).attr('href', 'http://{{ host }}:{{ port }}/');
                             // console.log(data);
                         } 
+                    }
+                )
+            })
+        })
+
+        // 提交
+        $(document).ready(function(){
+            $("#submit").click(function(){
+                // 判断每个复选框的状态
+                if ($('#pushplus').is(':checked')) {
+                    var switch_pushplus = true
+                }
+                else
+                {
+                    var switch_pushplus = false
+                }
+                if ($('#telegram').is(':checked')) {
+                    var switch_telegram = true
+                }
+                else
+                {
+                    var switch_telegram = false
+                }
+                if ($('#weather').is(':checked')) {
+                    var switch_weather = true
+                }
+                else
+                {
+                    var switch_weather = false
+                }
+                
+                // 提交内容
+                $.post('http://{{ host }}:{{ port }}/submit',
+                    {
+                        'name': $("#user_name").val(),
+                        'openid': $("#openid").val(),
+                        'xh': $("#xh").val(),
+                        'pushplustoken': $("#pushplustoken").val(),
+                        'tgtoken': $("#tgtoken").val(),
+                        'tg_user_id' : $("#tg_user_id").val(),
+                        'switch_pushplus' : switch_pushplus,
+                        'switch_telegram': switch_telegram,
+                        'switch_weather': switch_weather
+                    },
+                    function (data) {
+                        if (data.hasOwnProperty('error')) {
+                            alert(data.error)
+                        }
+                        else
+                        {
+                            alert(data['result'])
+                        }
                     }
                 )
             })
@@ -48,30 +102,30 @@
             </div>
             <div class="flex">
                 <p>pushplustoken</p>
-                <input type="text" id="xh" value="{{ pushplustoken }}">
+                <input type="text" id="pushplustoken" value="{{ pushplustoken }}">
             </div>
             <div class="flex">
                 <p>tg_bot_token</p>
-                <input type="text" id="xh" value="{{ tgtoken }}">
+                <input type="text" id="tgtoken" value="{{ tgtoken }}">
             </div>
             <div class="flex">
                 <p>tg_user_id</p>
-                <input type="text" id="xh" value="{{ tg_user_id }}">
+                <input type="text" id="tg_user_id" value="{{ tg_user_id }}">
             </div>
 
             <!-- 选择框 -->
             <div class="check">
                 <div class="check-box">
                     <div class="check-left-box">pushplus</div>
-                    <input type="checkbox" class="checkbox-right-box">
+                    <input type="checkbox" class="checkbox-right-box" id="pushplus" {{ switch_pushplus }}>
                 </div>
                 <div class="check-box">
                     <div class="check-left-box">telegram</div>
-                    <input type="checkbox" class="checkbox-right-box">
+                    <input type="checkbox" class="checkbox-right-box" id="telegram" {{ switch_telegram }}>
                 </div>
                 <div class="check-box">
                     <div class="check-left-box">weather</div>
-                    <input type="checkbox" class="checkbox-right-box">
+                    <input type="checkbox" class="checkbox-right-box" id="weather" {{ switch_weather }}>
                 </div>
             </div>
         </div>

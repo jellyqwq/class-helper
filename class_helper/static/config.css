@@ -73,6 +73,13 @@ input:hover {
     padding-right: 0.5em;
     white-space: nowrap;
     border-radius: 0.8em;
+    transition: all 1s;
+}
+.flex:hover {
+    box-shadow: 0 0 0.3em 0.3em #6969fe46;
+}
+.flex:focus-within {
+    box-shadow: 0 0 0.3em 0.3em #6969fe46;
 }
 .flex-button {
     display: flex;
@@ -110,6 +117,13 @@ button:hover {
     background: rgba(16, 1, 1, 0.064);
     border-radius: 0.8em;
     color: #6969fe;
+    transition: all 1s;
+}
+.check:hover {
+    box-shadow: 0 0 0.3em 0.3em #6969fe46;
+}
+.check:focus-within {
+    box-shadow: 0 0 0.3em 0.3em #6969fe46;
 }
 .check-box {
     display: flex;
@@ -118,6 +132,11 @@ button:hover {
     background-color: rgba(16, 1, 1, 0.064);
     font-size: 1.5em;
     border-radius: 0.4em;
+    transition: all 2s
+}
+.check-box:hover {
+    background-color: #6969fe;
+    color: rgb(255, 255, 255);
 }
 .check-left-box {
     font-weight: bold;

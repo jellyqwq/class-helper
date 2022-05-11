@@ -64,6 +64,13 @@ input:hover {
     padding: 0.5em;
     white-space: nowrap;
     border-radius: 0.8em;
+    transition: all 1s;
+}
+.flex:hover {
+    box-shadow: 0 0 0.3em 0.3em #6969fe46;
+}
+.flex:focus-within {
+    box-shadow: 0 0 0.3em 0.3em #6969fe46;
 }
 button {
     color: rgba(0, 0, 0, 0.763);
@@ -84,4 +91,9 @@ button:hover {
     justify-content: space-between;
     background-color: unset;
     padding: 0;
+    display: flex;
+    margin: 1.5em;
+    white-space: nowrap;
+    border-radius: 0.8em;
+    transition: all 1s;
 }

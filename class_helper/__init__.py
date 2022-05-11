@@ -156,37 +156,41 @@ def sendvcode():
 # 登录
 @app.route('/users/login', methods=['POST'])
 def login():
-    log.debug(request.content_type)
-    email = request.form['email']
-    log.debug("email: %s" % email)
-    pwd = request.form['pwd']
-    log.debug("password: %s" % pwd)
-    if email != '':
-        count = mycol.count_documents({'email':email})
-        log.debug("count: %d" % count)
-        if count == 0:
-            log.error('Email %s is unavailable' % email)
-            return res({'error': '邮箱不存在'})
-        if pwd != '':
-            d = mycol.find_one({'email':email})
-            log.debug("d: %s" % d)
-            if d['password'] == pwd:
-                old_hash = d['cookie']
-                temp_str = old_hash + str(time.time())
-                new_hash = hashlib.sha256(temp_str.encode('utf-8')).hexdigest()
-                result = mycol.update_one({"_id": d['_id']}, {"$set": { "cookie": new_hash}})
-                log.debug(result)
-                response = res(render_template('config.html'))
-                response.set_cookie('sh', new_hash, max_age=86400)
-                return response
-            else:
-                return res({'error': '密码错误'})
-        else:
-            log.error('Password %s can\'t be empty' % pwd)
-            return res({'error': '密码不能为空'})
+    try:
+        log.debug(request.content_type)
+        email = request.form['email']
+        log.debug("email: %s" % email)
+        pwd = request.form['pwd']
+        log.debug("password: %s" % pwd)
+    except:
+        return res({'error': '参数错误'})
     else:
-        log.error('Email %s can\'t be empty' % email)
-        return res({'error': '邮箱不能为空'})
+        if email != '':
+            count = mycol.count_documents({'email':email})
+            log.debug("count: %d" % count)
+            if count == 0:
+                log.error('Email %s is unavailable' % email)
+                return res({'error': '邮箱不存在'})
+            if pwd != '':
+                d = mycol.find_one({'email':email})
+                log.debug("d: %s" % d)
+                if d['password'] == pwd:
+                    old_hash = d['cookie']
+                    temp_str = old_hash + str(time.time())
+                    new_hash = hashlib.sha256(temp_str.encode('utf-8')).hexdigest()
+                    result = mycol.update_one({"_id": d['_id']}, {"$set": { "cookie": new_hash}})
+                    log.debug(result)
+                    response = res(render_template('config.html'))
+                    response.set_cookie('sh', new_hash, max_age=86400)
+                    return response
+                else:
+                    return res({'error': '密码错误'})
+            else:
+                log.error('Password %s can\'t be empty' % pwd)
+                return res({'error': '密码不能为空'})
+        else:
+            log.error('Email %s can\'t be empty' % email)
+            return res({'error': '邮箱不能为空'})
 
 # 退出登录-删除cookie
 @app.route('/users/logout', methods=['POST'])
@@ -195,14 +199,56 @@ def logout():
     response.delete_cookie('sh')
     return response
 
-@app.route('/test', methods=['POST'])
-def test():
-    log.debug(request.content_type)
-    email = request.form['email']
-    log.debug(email)
-    pwd = request.form['pwd']
-    log.debug(pwd)
-    return res({'succeed': '返回成功'})
+@app.route('/submit', methods=['POST'])
+def submit():
+    # 检查cookie
+    cookie = request.cookies.to_dict()
+    log.debug('cookie: %s' % cookie)
+    if cookie == {}:
+        # cookie为空返回数据
+        return res({'error': '未登录'})
+    elif 'sh' in cookie.keys():
+        # sh在cookie当中则提取sh并从数据库提取相关信息并生成表单
+        sh = cookie['sh']
+        log.debug('sh: %s', sh)
+        # 为了防止有人加了cookie来访问导致报错,必须将cookie丢到数据库里查找,确保存在才进行操作
+        count = mycol.count_documents({'cookie':sh})
+        if count == 0:
+            return res({'error': '未登录'})
+        else:
+            pass
+    else:
+        return res({'error': '未登录'})
+    try:
+        name = request.form['name']
+        openid = request.form['openid']
+        xh = request.form['xh']
+        pushplustoken = request.form['pushplustoken']
+        telegram_bot_token = request.form['tgtoken']
+        telegram_user_id = request.form['tg_user_id']
+        switch_pushplus = request.form['switch_pushplus']
+        switch_telegram = request.form['switch_telegram']
+        switch_weather = request.form['switch_weather']
+    except:
+        return res({'error': '参数错误'})
+    else:
+        mycol.update_many(
+            {'cookie': sh},
+            {
+                '$set': {
+                    'xh': xh,
+                    'name': name,
+                    'openid': openid,
+                    'pushplustoken': pushplustoken,
+                    'switch_weather': switch_weather,
+                    'switch_telegram': switch_telegram,
+                    'switch_pushplus': switch_pushplus,
+                    'telegram_user_id': telegram_user_id,
+                    'telegram_bot_token': telegram_bot_token,
+                }
+            }
+        )
+        return res({'result': '更新成功'})
 
 if __name__ == '__main__':
     app.run(host='localhost', port=4443, debug=True)

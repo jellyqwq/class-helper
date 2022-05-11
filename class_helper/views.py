@@ -1,3 +1,4 @@
+from turtle import pu
 from class_helper import app, render_template, request, log, res, mycol, config
 
 @app.route('/')
@@ -23,17 +24,27 @@ def index():
                         ))
         else:
             info = mycol.find_one({'cookie':sh})
-            user_name = info['name']
-            openid = info['openid']
-            xh = info['xh']
-            pushplustoken = info['pushplustoken']
+            # 功能开关状态
+            switch_pushplus = switch_telegram = switch_weather = ''
+            if info['switch_pushplus'] == 'true':
+                switch_pushplus = 'checked'
+            if info['switch_telegram'] == 'true':
+                switch_telegram = 'checked'
+            if info['switch_weather'] == 'true':
+                switch_weather = 'checked'
+
             return res(render_template('config.html',
                         host = config['Host'],
                         port = config['Port'],
-                        user_name = user_name,
-                        openid = openid,
-                        xh = xh,
-                        pushplustoken = pushplustoken,
+                        user_name = info['name'],
+                        openid = info['openid'],
+                        xh = info['xh'],
+                        tgtoken = info['telegram_bot_token'],
+                        tg_user_id = info['telegram_user_id'],
+                        pushplustoken = info['pushplustoken'],
+                        switch_pushplus = switch_pushplus,
+                        switch_telegram = switch_telegram,
+                        switch_weather = switch_weather,
                         ))
     else:
         return res(render_template('login.html',
