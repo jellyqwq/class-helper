@@ -21,12 +21,13 @@
                     function(data) {
                         console.log(data)
                         if (data.hasOwnProperty('error')) {
-                            console.log(data['error']);
+                            alert(data['error'])
+                            // console.log(data['error']);
                         }
                         else
                         {
                             $(location).attr('href', 'http://localhost:4443/');
-                            console.log(data);
+                            // console.log(data);
                         } 
                     }
                 )

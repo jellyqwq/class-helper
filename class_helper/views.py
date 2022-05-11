@@ -16,6 +16,16 @@ def index():
         if count == 0:
             return res(render_template('login.html'))
         else:
-             return res(render_template('config.html'))
+            info = mycol.find_one({'cookie':sh})
+            user_name = info['name']
+            openid = info['openid']
+            xh = info['xh']
+            pushplustoken = info['pushplustoken']
+            return res(render_template('config.html',
+                        user_name = user_name,
+                        openid = openid,
+                        xh = xh,
+                        pushplustoken = pushplustoken,
+                        ))
     else:
         return res(render_template('login.html'))

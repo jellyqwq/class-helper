@@ -10,135 +10,25 @@
     <script>
         $(document).ready(function() {
             $("#logout").click(function(){
-                $.post('http://localhost:4443/users/logout')
+                $.post('http://localhost:4443/users/logout',
+                    function(data) {
+                        // console.log(data)
+                        if (data.hasOwnProperty('error')) {
+                            alert(data['error'])
+                            // console.log(data['error']);
+                        }
+                        else
+                        {
+                            $(location).attr('href', 'http://localhost:4443/');
+                            // console.log(data);
+                        } 
+                    }
+                )
             })
         })
     </script>
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-        }
-        html {
-            height: 100%;
-        }
-        body {
-            min-height: 100%;
-            /* background: linear-gradient(to bottom right, blue, pink); */
-            background: linear-gradient(to right,#4040f7,#8dadff);
-        }
-        .main-box {
-            display: flex;
-            background-color: rgb(255, 255, 255);
-            flex-direction: column;
-            height: auto;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%,-50%);
-            border-radius: 0.8em;
-        }
-        .title {
-            margin:0.5em;
-            font-style: italic;
-            color: rgba(0, 0, 0, 0.763);
-        }
-        .ep-box {
-            margin: 0 2em;
-        }
-        .flex p {
-            display: inline-block;
-            font-size: 1.5em;
-            margin-right: 0.7em;
-            padding-top: 0.2em;
-            color:#6969fe;
-            min-width: 6em;
-            text-align: center;
-            vertical-align: middle;
-        }
-        .flex input {
-            width: 100%;
-            min-width: 15em;
-            min-height: 1em;
-            outline: none;
-            font-size: 1.5em;  
-            background-color: rgba(0, 0, 0, 0.089);
-            padding: 0.2em;
-            border-width: 0;
-            border-radius: 0.4em;
-            color: #6969fe;
-            transition: background-color 1s;
-        }
-        input:hover {
-            background-color: rgba(105, 105, 254, 0.463);
-            color: rgb(255, 255, 255);
-        }
-        /* input:focus {
-            background-color: rgba(105, 105, 254, 0.463);
-            color: rgb(255, 255, 255);
-        } */
-        .flex {
-            background: rgba(16, 1, 1, 0.064);
-            display: flex;
-            margin: 1.5em;
-            padding: 0.5em;
-            white-space: nowrap;
-            border-radius: 0.8em;
-        }
-        .flex-button {
-            display: flex;
-            margin: 1.5em;
-            padding: 0.5em;
-            white-space: nowrap;
-            border-radius: 0.8em;
-        }
-        .label {
-            justify-content: space-between;
-        }
-        button {
-            color: rgba(0, 0, 0, 0.763);
-            background-color: rgba(1, 1, 1, 0.064);
-            padding: 0.4em;
-            border-width: 0;
-            border-radius: 0.4em;
-            font-size: 1.5em;
-            color: #6969fe;
-            cursor: pointer;
-            transition: background-color 2s, transform 2s;
-        }
-        button:hover {
-            background-color: #6969fe;
-            color: rgb(255, 255, 255);
-        }
-        .check {
-            display: flex;
-            flex-direction: column;
-            white-space: nowrap;
-            margin: 1.5em;
-            padding: 0.5em 0.7em;
-            background: rgba(16, 1, 1, 0.064);
-            border-radius: 0.8em;
-            color: #6969fe;
-        }
-        .check-box {
-            display: flex;
-            max-width:auto;
-            /* height: 1.5em; */
-            padding: 0.5em 0;
-            background-color: rgba(16, 1, 1, 0.064);
-            font-size: 1.5em;
-            border-radius: 0.4em;
-        }
-        .check-left-box {
-            width: 2em;
-            padding: 0.1em 0.4em 0.2em 0.2em;
-        }
-        .checkbox-right-box {
-            width: 2em;
-            height: 2em;
-            transform: translate(0, 20%)
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'config.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/config.css">
 </head>
 <body>
     <div class="main-box">
@@ -147,26 +37,41 @@
         <div class="ep-box">
             <div class="flex">
                 <p>name</p>
-                <input type="text" id="user_name" value="nihao">
+                <input type="text" id="user_name" value="{{ user_name }}">
             </div>
             <div class="flex">
                 <p>openid</p>
-                <input type="text" id="openid" value="openid">
+                <input type="text" id="openid" value="{{ openid }}">
             </div>
             <div class="flex">
                 <p>xh</p>
-                <input type="text" id="xh" value="xh">
+                <input type="text" id="xh" value="{{ xh }}">
             </div>
             <div class="flex">
                 <p>pushplustoken</p>
-                <input type="text" id="xh" value="xh">
+                <input type="text" id="xh" value="{{ pushplustoken }}">
             </div>
             <div class="check">
                 <div class="check-box">
-                    <div class="check-left-box">push</div>
+                    <div class="check-left-box">pushplus</div>
                     <input type="checkbox" class="checkbox-right-box">
                 </div>
-                
+                <div class="check-box">
+                    <div class="check-left-box">telegram</div>
+                    <input type="checkbox" class="checkbox-right-box">
+                </div>
+                <div class="check-box">
+                    <div class="check-left-box">cqhttp</div>
+                    <input type="checkbox" class="checkbox-right-box">
+                </div>
+                <div class="check-box">
+                    <div class="check-left-box">weather</div>
+                    <input type="checkbox" class="checkbox-right-box">
+                </div>
+                <div class="check-box">
+                    <div class="check-left-box">else</div>
+                    <input type="checkbox" class="checkbox-right-box">
+                </div>
             </div>
             <div class="flex-button label">
                 <button id="submit" class="ts">submit</button>
