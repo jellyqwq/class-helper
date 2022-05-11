@@ -8,12 +8,12 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.js"></script>
     <script>
-        // https://segmentfault.com/q/1010000009407374
+        // 点击登录
         $(document).ready(function() {
             $("#login").click(function(e){
                 // e.preventDefault();
                 // post
-                $.post('http://localhost:4443/users/login',
+                $.post('http://{{ host }}:{{ port }}/users/login',
                     {
                         'email': $("#email").val(),
                         'pwd': $("#pwd").val()
@@ -26,20 +26,44 @@
                         }
                         else
                         {
-                            $(location).attr('href', 'http://localhost:4443/');
+                            $(location).attr('href', 'http://{{ host }}:{{ port }}/');
                             // console.log(data);
                         } 
                     }
                 )
             })
-        })
+        });
+
+        // 回车登录
+        $(document).keyup(function(event){
+            if (event.keyCode == 13) {
+                $.post('http://{{ host }}:{{ port }}/users/login',
+                    {
+                        'email': $("#email").val(),
+                        'pwd': $("#pwd").val()
+                    },
+                    function(data) {
+                        console.log(data)
+                        if (data.hasOwnProperty('error')) {
+                            alert(data['error'])
+                            // console.log(data['error']);
+                        }
+                        else
+                        {
+                            $(location).attr('href', 'http://{{ host }}:{{ port }}/');
+                            // console.log(data);
+                        } 
+                    }
+                )
+            }
+        });
     </script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'login.css') }}">
     <link rel="stylesheet" type="text/css" href="../static/login.css">
 </head>
 <body>
     <div class="main-box">
-        <h1 class="title">Class Helper</h1>
+        <div class="title">Class Helper</div>
         <div class="ep-box">
             <div class="flex">
                 <p>邮箱:</p>
@@ -47,7 +71,7 @@
             </div>
             <div class="flex">
                 <p>密码:</p>
-                <input type="text" name="" id="pwd" placeholder="请输入密码" maxlength="25" minlength="6"><br>
+                <input type="password" name="" id="pwd" placeholder="请输入密码" maxlength="25" minlength="6"><br>
             </div>
             <div class="flex label">
                 <button id="login" class="login">登录</button>

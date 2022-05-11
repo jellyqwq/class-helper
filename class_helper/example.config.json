@@ -2,5 +2,7 @@
     "QQAccount": "",
     "QQEmail": "",
     "QQEmailPassword": "",
-    "VerificationCodeLenth": 4
+    "VerificationCodeLenth": 4,
+    "Host": "127.0.0.1",
+    "Port": "4443"
 }

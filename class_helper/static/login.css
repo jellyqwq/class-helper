@@ -4,8 +4,10 @@
 }
 .main-box {
     display: flex;
-    background-color: rgb(26, 164, 202);
+    /* background: linear-gradient(to right bottom,#4040f7,#8dadff); */
     flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
     height: auto;
     position: absolute;
     left: 50%;
@@ -14,9 +16,13 @@
     border-radius: 0.8em;
 }
 .title {
-    margin:0.5em;
+    margin:0.3em;
+    font-size: 5em;
     font-style: italic;
-    color: rgb(255, 255, 255);
+    font-weight: bold;
+    white-space: nowrap;
+    color: #6969fe;
+    /* background-color:rgb(225, 65, 65) */
 }
 .ep-box {
     margin: 0 2em;
@@ -27,13 +33,32 @@ p {
     color:rgb(255, 255, 255);
 }
 input {
-    min-width: 15em;
+    width: 100%;
+    min-width: 4em;
     min-height: 1em;
     outline: none;
-    font-size: 1.0em; 
+    font-size: 1.5em;  
+    background-color: rgba(0, 0, 0, 0.089);
+    padding: 0.2em;
+    border-width: 0;
+    border-radius: 0.4em;
+    color: #6969fe;
+    transition: background-color 1s;
+}
+input:hover {
+    background-color: rgba(105, 105, 254, 0.463);
+    color: rgb(255, 255, 255);
+}
+.flex p {
+    display: inline-block;
+    font-size: 1.5em;
+    margin-right: 0.7em;
+    color:#6969fe;
+    /* min-width: 6em; */
+    text-align: center;
 }
 .flex {
-    background-color: rgba(107, 45, 129, 0.79);
+    background-color: rgba(0, 0, 0, 0.089);
     display: flex;
     margin: 1.5em;
     padding: 0.5em;
@@ -41,13 +66,22 @@ input {
     border-radius: 0.8em;
 }
 button {
-    color: rgb(255, 255, 255);
-    background-color: rgb(26, 164, 202);
-    padding: 0 0.2em;
+    color: rgba(0, 0, 0, 0.763);
+    background-color: rgba(1, 1, 1, 0.064);
+    padding: 0.2em;
     border-width: 0;
     border-radius: 0.4em;
     font-size: 1.5em;
+    color: #6969fe;
+    cursor: pointer;
+    transition: background-color 2s, transform 2s;
+}
+button:hover {
+    background-color: #6969fe;
+    color: rgb(255, 255, 255);
 }
 .label {
     justify-content: space-between;
+    background-color: unset;
+    padding: 0;
 }
