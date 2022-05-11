@@ -52,11 +52,12 @@
             margin-right: 0.7em;
             padding-top: 0.2em;
             color:#6969fe;
-            min-width: 3em;
+            min-width: 6em;
             text-align: center;
             vertical-align: middle;
         }
-        input {
+        .flex input {
+            width: 100%;
             min-width: 15em;
             min-height: 1em;
             outline: none;
@@ -97,7 +98,7 @@
         button {
             color: rgba(0, 0, 0, 0.763);
             background-color: rgba(1, 1, 1, 0.064);
-            padding: 0 0.2em;
+            padding: 0.4em;
             border-width: 0;
             border-radius: 0.4em;
             font-size: 1.5em;
@@ -111,8 +112,31 @@
         }
         .check {
             display: flex;
+            flex-direction: column;
+            white-space: nowrap;
             margin: 1.5em;
-            padding: 0 0.2em
+            padding: 0.5em 0.7em;
+            background: rgba(16, 1, 1, 0.064);
+            border-radius: 0.8em;
+            color: #6969fe;
+        }
+        .check-box {
+            display: flex;
+            max-width:auto;
+            /* height: 1.5em; */
+            padding: 0.5em 0;
+            background-color: rgba(16, 1, 1, 0.064);
+            font-size: 1.5em;
+            border-radius: 0.4em;
+        }
+        .check-left-box {
+            width: 2em;
+            padding: 0.1em 0.4em 0.2em 0.2em;
+        }
+        .checkbox-right-box {
+            width: 2em;
+            height: 2em;
+            transform: translate(0, 20%)
         }
     </style>
 </head>
@@ -133,9 +157,14 @@
                 <p>xh</p>
                 <input type="text" id="xh" value="xh">
             </div>
+            <div class="flex">
+                <p>pushplustoken</p>
+                <input type="text" id="xh" value="xh">
+            </div>
             <div class="check">
-                <div class="ltbox">
-                    推送开关<input type="checkbox">
+                <div class="check-box">
+                    <div class="check-left-box">push</div>
+                    <input type="checkbox" class="checkbox-right-box">
                 </div>
                 
             </div>
