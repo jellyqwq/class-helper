@@ -51,3 +51,10 @@ def index():
                     host = config['Host'],
                     port = config['Port']
                     ))
+
+@app.route('/register')
+def register():
+    return res(render_template('register.html',
+                        host = config['Host'],
+                        port = config['Port'],
+                        ))

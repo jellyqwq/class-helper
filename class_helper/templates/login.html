@@ -57,6 +57,13 @@
                 )
             }
         });
+
+        // 注册跳转
+        $(document).ready(function() {
+            $("#signup").click(function() {
+                $(location).attr('href', 'http://{{ host }}:{{ port }}/register');
+            })
+        })
     </script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'login.css') }}">
     <link rel="stylesheet" type="text/css" href="../static/login.css">

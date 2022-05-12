@@ -1,5 +1,4 @@
-from calendar import c
-import imp
+import re
 import random
 import pymongo
 from flask import Flask, render_template, request, make_response
@@ -104,54 +103,119 @@ import class_helper.views
 # 注册
 @app.route('/users/signup', methods=['POST'])
 def signup():
-    name = request.json['name']
-    email = request.json['email']
-    password = request.json['pwd']
-    sc = request.json['sc']
-    for k, v in security_code.items():
-        if v[email] == sc:
-            # 仅当collection为空时可以直接写入
-            if not DBEXIST and not COLEXIST:
-                result = mycol.insert_one({
-                    "name": name,
-                    "email": email,
-                    "password": password,
-                })
-                log.info('sign up info writed successfully: %s' % result)
-                del security_code[k]
-                return json.dumps({'success': 0})
-            # count_documents()可以计算指定元素的出现次数
-            elif mycol.count_documents({'email':email}):
-                log.info('email is exist')
-                return json.dumps({'error': 'email is exist'})
-            else:
-                mycol.insert_one({
-                    'name':name, 
-                    'email':email, 
-                    'password':password,
-                })
-                log.info('account created successfully\nname: %s\nemail: %s\npassword: %s' % (name, email, password))
-                del security_code[k]
-                return json.dumps({'success': 0})
+    try:
+        email = request.form['email']
+        password = request.form['pwd']
+        sc = request.form['sc']
+    except:
+        return res({'error': '参数错误'})
+    else:
+        # 数据校验
+        if email == '':
+            return res({'error': '邮箱不能为空'})
+        if password == '':
+            return res({'error': '密码不能为空'})
+        if sc == '':
+            return res({'error': '验证码不能为空'})
+        if not bool(re.match(r'^[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]{1,64}@[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]{3,64}$', email, re.I)):
+            return res({'error': '邮箱不合法'})
+        if not bool(re.match(r'^[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]{6,32}$', password, re.I)):
+            return res({'error': '密码不合法'})
+        if not bool(re.match(r'^[0-9a-z]+$', sc, re.I)) and len(sc) != config['VerificationCodeLenth']:
+            return res({'error': '验证码不合法'})
+        
+        # 将超时验证码删除
+        t = time.time()
+        if security_code != {}: 
+            for i in security_code.keys():
+                if int(t) - int(i) >= 180:
+                    del security_code[i]
+
+        # 密码哈希加密
+        hash_pwd = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        for k, v in security_code.items():
+            if v[email] == sc:
+                # 生成cookie
+                temp_str = email + str(time.time())
+                cookie = hashlib.sha256(temp_str.encode('utf-8')).hexdigest()
+
+                # 仅当collection为空时可以直接写入
+                if not DBEXIST and not COLEXIST:
+                    result = mycol.insert_one({
+                        "name": "",
+                        "email": email,
+                        "password": hash_pwd,
+                        "cookie": cookie,
+                        "openid": "",
+                        "xh": "",
+                        "pushplustoken": "",
+                        "switch_pushplus": "",
+                        "switch_telegram": "",
+                        "switch_weather": "",
+                        "telegram_bot_token": "",
+                        "telegram_user_id": ""
+                    })
+                    log.info('sign up info writed successfully: %s' % result)
+                    del security_code[k]
+                    response = res({'success': '注册成功'})
+                    response.set_cookie('sh', cookie, max_age=86400)
+                    return response
+                # count_documents()可以计算指定元素的出现次数
+                elif mycol.count_documents({'email':email}):
+                    log.info('email is exist')
+                    return res({'error': '邮箱不存在'})
+                else:
+                    mycol.insert_one({
+                        "name": "",
+                        "email": email,
+                        "password": hash_pwd,
+                        "cookie": cookie,
+                        "openid": "",
+                        "xh": "",
+                        "pushplustoken": "",
+                        "switch_pushplus": "",
+                        "switch_telegram": "",
+                        "switch_weather": "",
+                        "telegram_bot_token": "",
+                        "telegram_user_id": ""
+                    })
+                    log.info('account created successfully\nemail: %s\npassword: %s' % (email, password))
+                    del security_code[k]
+                    response = res({'success': '注册成功'})
+                    response.set_cookie('sh', cookie, max_age=86400)
+                    return response
+        return res({'error': '验证码超时或未发送'})
 
 # 验证码
 @app.route('/sendvcode', methods=['POST'])
 def sendvcode():
-    # count_documents()可以计算指定元素的出现次数
-    if mycol.count_documents({'email':email}):
-        log.info('email %s was already signed up' % email)
-        return json.dumps({'error': 'email was already signed up'})
-    t = time.time()
-    if security_code != {}: 
-        for i in security_code.keys():
-            if int(t) - int(i) >= 180:
-                del security_code[i]
-    email = request.json['email']
-    content = generate_verification_code()
-    send_email(email,content)
-    security_code[time.time()] = {email:content}
-    log.info('verification code sent successfully')
-    return json.dumps({'succeed': 0})
+    try:
+        email = request.form['email']
+    except:
+        return res({'error': '参数错误'})
+    else:
+        if email == '':
+            return res({'error': '邮箱不能为空'})
+        if not bool(re.match(r'^[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]+@[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]+$', email, re.I)):
+            return res({'error': '邮箱不合法'})
+        # count_documents()可以计算指定元素的出现次数
+        if mycol.count_documents({'email':email}):
+            log.info('email %s was already signed up' % email)
+            return res({'error': '邮箱已存在'})
+        t = time.time()
+        if security_code != {}: 
+            for i in security_code.keys():
+                if int(t) - int(i) >= 180:
+                    del security_code[i]
+            for i in security_code.values():
+                log.debug(i)
+                if email in i:
+                    return res({'error': '请勿重复发送验证码'})
+        content = generate_verification_code()
+        send_email(email,content)
+        security_code[time.time()] = {email:content}
+        log.info('verification code sent successfully')
+        return res({'result': '验证码发送成功(3分钟有效)'})
 
 # 登录
 @app.route('/users/login', methods=['POST'])
@@ -174,7 +238,8 @@ def login():
             if pwd != '':
                 d = mycol.find_one({'email':email})
                 log.debug("d: %s" % d)
-                if d['password'] == pwd:
+                hash_pwd = hashlib.sha256(pwd.encode('utf-8')).hexdigest()
+                if d['password'] == hash_pwd:
                     old_hash = d['cookie']
                     temp_str = old_hash + str(time.time())
                     new_hash = hashlib.sha256(temp_str.encode('utf-8')).hexdigest()
@@ -202,53 +267,57 @@ def logout():
 @app.route('/submit', methods=['POST'])
 def submit():
     # 检查cookie
-    cookie = request.cookies.to_dict()
-    log.debug('cookie: %s' % cookie)
-    if cookie == {}:
-        # cookie为空返回数据
-        return res({'error': '未登录'})
-    elif 'sh' in cookie.keys():
-        # sh在cookie当中则提取sh并从数据库提取相关信息并生成表单
-        sh = cookie['sh']
-        log.debug('sh: %s', sh)
-        # 为了防止有人加了cookie来访问导致报错,必须将cookie丢到数据库里查找,确保存在才进行操作
-        count = mycol.count_documents({'cookie':sh})
-        if count == 0:
-            return res({'error': '未登录'})
-        else:
-            pass
-    else:
-        return res({'error': '未登录'})
     try:
-        name = request.form['name']
-        openid = request.form['openid']
-        xh = request.form['xh']
-        pushplustoken = request.form['pushplustoken']
-        telegram_bot_token = request.form['tgtoken']
-        telegram_user_id = request.form['tg_user_id']
-        switch_pushplus = request.form['switch_pushplus']
-        switch_telegram = request.form['switch_telegram']
-        switch_weather = request.form['switch_weather']
+        cookie = request.cookies.to_dict()
     except:
         return res({'error': '参数错误'})
     else:
-        mycol.update_many(
-            {'cookie': sh},
-            {
-                '$set': {
-                    'xh': xh,
-                    'name': name,
-                    'openid': openid,
-                    'pushplustoken': pushplustoken,
-                    'switch_weather': switch_weather,
-                    'switch_telegram': switch_telegram,
-                    'switch_pushplus': switch_pushplus,
-                    'telegram_user_id': telegram_user_id,
-                    'telegram_bot_token': telegram_bot_token,
+        log.debug('cookie: %s' % cookie)
+        if cookie == {}:
+            # cookie为空返回数据
+            return res({'error': '未登录'})
+        elif 'sh' in cookie.keys():
+            # sh在cookie当中则提取sh并从数据库提取相关信息并生成表单
+            sh = cookie['sh']
+            log.debug('sh: %s', sh)
+            # 为了防止有人加了cookie来访问导致报错,必须将cookie丢到数据库里查找,确保存在才进行操作
+            count = mycol.count_documents({'cookie':sh})
+            if count == 0:
+                return res({'error': '未登录'})
+            else:
+                pass
+        else:
+            return res({'error': '未登录'})
+        try:
+            name = request.form['name']
+            openid = request.form['openid']
+            xh = request.form['xh']
+            pushplustoken = request.form['pushplustoken']
+            telegram_bot_token = request.form['tgtoken']
+            telegram_user_id = request.form['tg_user_id']
+            switch_pushplus = request.form['switch_pushplus']
+            switch_telegram = request.form['switch_telegram']
+            switch_weather = request.form['switch_weather']
+        except:
+            return res({'error': '参数错误'})
+        else:
+            mycol.update_many(
+                {'cookie': sh},
+                {
+                    '$set': {
+                        'xh': xh,
+                        'name': name,
+                        'openid': openid,
+                        'pushplustoken': pushplustoken,
+                        'switch_weather': switch_weather,
+                        'switch_telegram': switch_telegram,
+                        'switch_pushplus': switch_pushplus,
+                        'telegram_user_id': telegram_user_id,
+                        'telegram_bot_token': telegram_bot_token,
+                    }
                 }
-            }
-        )
-        return res({'result': '更新成功'})
+            )
+            return res({'result': '更新成功'})
 
 if __name__ == '__main__':
     app.run(host='localhost', port=4443, debug=True)
