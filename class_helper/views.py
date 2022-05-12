@@ -1,4 +1,3 @@
-from turtle import pu
 from class_helper import app, render_template, request, log, res, mycol, config
 
 @app.route('/')
