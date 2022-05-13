@@ -16,12 +16,15 @@
 }
 .title {
     margin:0.3em;
-    font-size: 3em;
-    font-style: italic;
+    font-size: 3.5em;
+    /* font-style: italic; */
     font-weight: bold;
     white-space: nowrap;
-    color: #6969fe;
-    /* background-color:rgb(225, 65, 65) */
+    background: linear-gradient(to top right, #7bb1ff, #a6aaff, #f1b9f3, #9dfdfd, #7bb1ff, #a6aaff, #f1b9f3, #9dfdfd, #7bb1ff);
+    background-size: 500% 500%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 .ep-box {
     margin: 0 2em;

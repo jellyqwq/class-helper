@@ -165,7 +165,7 @@ def signup():
                     log.info('email is exist')
                     return res({'error': '邮箱不存在'})
                 else:
-                    mycol.insert_one({
+                    result = mycol.insert_one({
                         "name": "",
                         "email": email,
                         "password": hash_pwd,
@@ -179,6 +179,7 @@ def signup():
                         "telegram_bot_token": "",
                         "telegram_user_id": ""
                     })
+                    log.info('sign up info writed successfully: %s' % result)
                     log.info('account created successfully\nemail: %s\npassword: %s' % (email, password))
                     del security_code[k]
                     response = res({'success': '注册成功'})
