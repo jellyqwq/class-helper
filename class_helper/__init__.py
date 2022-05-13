@@ -1,22 +1,21 @@
+import os
+import json
+# os.chdir(os.path.dirname(__file__))
+# 读取配置文件
+with open("./class_helper/example.config.json", "r", encoding="utf-8") as f:
+    config = json.loads(f.read())
+
 import re
 import random
 import pymongo
-from flask import Flask, render_template, request, make_response
+
 import logging as log
-import json
 import time
-import os
 import hashlib
 
 from email.mime.text import MIMEText
 from email.header import Header
 from smtplib import SMTP_SSL
-
-os.chdir(os.path.dirname(__file__))
-
-# 读取配置文件
-with open("example.config.json", "r", encoding="utf-8") as f:
-    config = json.loads(f.read())
 
 # 设置输出日志格式以及等级
 log.basicConfig(
@@ -25,7 +24,7 @@ log.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S')
 
 # 初始化数据库,建立数据库对象
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+myclient = pymongo.MongoClient("mongodb://{}:{}/".format(config['MongoDBHost'], config['MongoDBPort']))
 mydb = myclient["class_helper"]
 log.info("database is loading...")
 DBEXIST = COLEXIST = True
@@ -92,10 +91,11 @@ def send_email(email, content):
     smtp.sendmail(sender_qq_mail, receiver, msg.as_string())
     smtp.quit()
 
+from flask import Flask, render_template, request, make_response
 # 请求头的设置
-def res(params: str | dict | None):
+def res(params):
     response = make_response(params)
-    response.access_control_allow_origin = 'http://127.0.0.1:4443'
+    response.access_control_allow_origin = 'http://{}:{}'.format(config['Host'], config['Port'])
     return response
 
 app = Flask(__name__, template_folder='templates')
