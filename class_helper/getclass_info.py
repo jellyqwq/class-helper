@@ -53,8 +53,8 @@ headers = {
     'X-Requested-With': 'XMLHttpRequest'
 }
 data = {
-    'openid': 'ocoU9uGYdZZDfz9WCNJ7nd2aLF3k',
-    'xh': '2021020740025',
+    'openid': '',
+    'xh': '',
     'falg': 'true'
     }
 
