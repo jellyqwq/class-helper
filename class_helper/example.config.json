@@ -2,7 +2,14 @@
     "QQAccount": "",
     "QQEmail": "",
     "QQEmailPassword": "",
-    "VerificationCodeLenth": 4,
+    "VerificationCodeLenth": 6,
+    "RunHost": "127.0.0.1",
+    "RunPort": "6703",
     "Host": "127.0.0.1",
-    "Port": "4443"
+    "Port": "6703",
+    "MongoDBHost": "127.0.0.1",
+    "MongoDBPort": "27017",
+    "HTTPS": false,
+    "TakeWorkingDaysOff": [[],[]],
+    "PushTime": "06:00"
 }
