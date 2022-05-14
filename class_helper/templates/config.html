@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>class helper setting</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <script type="text/javascript" src="{{ url_for('static', filename='jquery-1.7.2.js') }}"></script>
-    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery/jquery-1.7.2.js"></script>
+    <!-- <script type="text/javascript" src="{{ url_for('static', filename='jquery-1.7.2.js') }}"></script> -->
+    <script type="text/javascript" src="https://ajax.microsoft.com/ajax/jquery/jquery-1.7.2.js"></script>
     <script>
         // 登出
         $(document).ready(function() {
             $("#logout").click(function(){
-                $.post('http://{{ host }}:{{ port }}/users/logout',
+                $.post('{{ orgin }}/users/logout',
                     function(data) {
                         // console.log(data)
                         if (data.hasOwnProperty('error')) {
@@ -21,7 +21,7 @@
                         }
                         else
                         {
-                            $(location).attr('href', 'http://{{ host }}:{{ port }}/');
+                            $(location).attr('href', '{{ orgin }}/');
                             // console.log(data);
                         } 
                     }
@@ -56,7 +56,7 @@
                 }
                 
                 // 提交内容
-                $.post('http://{{ host }}:{{ port }}/submit',
+                $.post('{{ orgin }}/submit',
                     {
                         'name': $("#user_name").val(),
                         'openid': $("#openid").val(),
@@ -109,7 +109,7 @@
                     }
                     
                     // 提交内容
-                    $.post('http://{{ host }}:{{ port }}/submit',
+                    $.post('{{ orgin }}/submit',
                         {
                             'name': $("#user_name").val(),
                             'openid': $("#openid").val(),

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>class helper register</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script type="text/javascript" src="https://ajax.microsoft.com/ajax/jquery/jquery-1.4.js"></script>
     <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.js"></script>
     <script>
         // 点击登录
@@ -13,7 +14,7 @@
             $("#login").click(function(e){
                 // e.preventDefault();
                 // post
-                $.post('http://{{ host }}:{{ port }}/users/login',
+                $.post('{{ orgin }}/users/login',
                     {
                         'email': $("#email").val(),
                         'pwd': $("#pwd").val()
@@ -24,7 +25,7 @@
                         }
                         else
                         {
-                            $(location).attr('href', 'http://{{ host }}:{{ port }}/');
+                            $(location).attr('href', '{{ orgin }}/');
                         } 
                     }
                 )
@@ -34,14 +35,14 @@
         // 返回登录页
         $(document).ready(function() {
             $("#back").click(function() {
-                $(location).attr('href', 'http://{{ host }}:{{ port }}/')
+                $(location).attr('href', '{{ orgin }}/')
             })
         })
 
         // 校验邮箱并获取验证码
         $(document).ready(function() {
             $("#verifycode").click(function() {
-                $.post('http://{{ host }}:{{ port }}/sendvcode',
+                $.post('{{ orgin }}/sendvcode',
                 {
                     'email': $("#email").val()
                 },
@@ -82,7 +83,7 @@
                             }
                             else
                             {
-                                $.post('http://{{ host }}:{{ port }}/users/signup', {
+                                $.post('{{ orgin }}/users/signup', {
                                     'email': $("#email").val(),
                                     'pwd': pwd1,
                                     "sc": $("#inputverifycode").val()
@@ -94,7 +95,7 @@
                                     else
                                     {
                                         alert(data['success'])
-                                        $(location).attr('href', 'http://{{ host }}:{{ port }}/');
+                                        $(location).attr('href', '{{ orgin }}/');
                                     };
                                 })
                             }

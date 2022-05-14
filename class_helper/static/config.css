@@ -29,7 +29,11 @@ body {
     font-size: 3em;
     font-weight: bold;
     font-style: italic;
-    color: #6969fe;
+    background: linear-gradient(to top right, #7bb1ff, #a6aaff, #f1b9f3, #9dfdfd, #7bb1ff, #a6aaff, #f1b9f3, #9dfdfd, #7bb1ff);
+    background-size: 500% 500%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 .ep-box {
     margin: 0 2em;

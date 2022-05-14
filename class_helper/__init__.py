@@ -1,6 +1,4 @@
-import os
 import json
-# os.chdir(os.path.dirname(__file__))
 # 读取配置文件
 with open("./class_helper/example.config.json", "r", encoding="utf-8") as f:
     config = json.loads(f.read())
@@ -8,7 +6,6 @@ with open("./class_helper/example.config.json", "r", encoding="utf-8") as f:
 import re
 import random
 import pymongo
-
 import logging as log
 import time
 import hashlib
@@ -23,22 +20,30 @@ log.basicConfig(
     level=log.DEBUG,
     datefmt='%Y-%m-%d %H:%M:%S')
 
+# 协议选择
+if config['HTTPS'] == True:
+    origin = 'https://{}:{}'.format(config['Host'], config['Port'])
+else:
+    origin = 'http://{}:{}'.format(config['Host'], config['Port'])
+
 # 初始化数据库,建立数据库对象
-myclient = pymongo.MongoClient("mongodb://{}:{}/".format(config['MongoDBHost'], config['MongoDBPort']))
-mydb = myclient["class_helper"]
-log.info("database is loading...")
-DBEXIST = COLEXIST = True
-dblist = myclient.list_database_names()
-if 'class_helper' not in dblist:
-    log.info('database is empty')
-    DBEXIST = False
-mycol = mydb['user_config']
-collist = mydb.list_collection_names()
-if collist == []:
-    log.info('collection is empty')
-    COLEXIST = False
-if DBEXIST and COLEXIST:
-    log.info('database loaded successfully')
+def load_mongodb():
+    myclient = pymongo.MongoClient("mongodb://{}:{}/".format(config['MongoDBHost'], config['MongoDBPort']))
+    mydb = myclient["class_helper"]
+    log.info("database is loading...")
+    DBEXIST = COLEXIST = True
+    dblist = myclient.list_database_names()
+    if 'class_helper' not in dblist:
+        log.info('database is empty')
+        DBEXIST = False
+    mycol = mydb['user_config']
+    collist = mydb.list_collection_names()
+    if collist == []:
+        log.info('collection is empty')
+        COLEXIST = False
+    if DBEXIST and COLEXIST:
+        log.info('database loaded successfully')
+    return mycol, DBEXIST, COLEXIST
 
 # 验证码缓存
 security_code = {}
@@ -95,14 +100,15 @@ from flask import Flask, render_template, request, make_response
 # 请求头的设置
 def res(params):
     response = make_response(params)
-    response.access_control_allow_origin = 'http://{}:{}'.format(config['Host'], config['Port'])
+    response.access_control_allow_origin = origin
     return response
 
 app = Flask(__name__, template_folder='templates')
-import class_helper.views
+from . import views
 # 注册
 @app.route('/users/signup', methods=['POST'])
 def signup():
+    mycol, DBEXIST, COLEXIST = load_mongodb()
     try:
         email = request.form['email']
         password = request.form['pwd']
@@ -190,6 +196,7 @@ def signup():
 # 验证码
 @app.route('/sendvcode', methods=['POST'])
 def sendvcode():
+    mycol, DBEXIST, COLEXIST = load_mongodb()
     try:
         email = request.form['email']
     except:
@@ -221,6 +228,7 @@ def sendvcode():
 # 登录
 @app.route('/users/login', methods=['POST'])
 def login():
+    mycol, DBEXIST, COLEXIST = load_mongodb()
     try:
         log.debug(request.content_type)
         email = request.form['email']
@@ -261,12 +269,16 @@ def login():
 # 退出登录-删除cookie
 @app.route('/users/logout', methods=['POST'])
 def logout():
-    response = res(render_template('login.html'))
+    # response = res(render_template('login.html',
+    #                 host = config['Host'],
+    #                 port = config['Port']))
+    response = res({'success': '退出成功'})
     response.delete_cookie('sh')
     return response
 
 @app.route('/submit', methods=['POST'])
 def submit():
+    mycol, DBEXIST, COLEXIST = load_mongodb()
     # 检查cookie
     try:
         cookie = request.cookies.to_dict()
@@ -319,6 +331,7 @@ def submit():
                 }
             )
             return res({'result': '更新成功'})
+
 
 if __name__ == '__main__':
     app.run(host='localhost', port=4443, debug=True)
