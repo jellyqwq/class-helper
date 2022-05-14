@@ -19,7 +19,7 @@ headers = {
         'X-Requested-With': 'XMLHttpRequest'
     }
 
-def urllibpost(url = None, headers = None, data = None) -> dict | list:
+def urllibpost(url = None, headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36'}, data = None):
     'A post method by urllib'
     data = urllib.parse.urlencode(data).encode('utf-8')
     try:
@@ -107,7 +107,7 @@ def parse_class(_josn, week, week_count, data_course, cweek, cweek_count):
                             data_course['时间'] = '第{}周 | 星期{}'.format(week_count, week)
                             
                             # 调休增加的信息
-                            if cweek_count != week_count and cweek != week:
+                            if cweek_count != None and cweek != None:
                                 data_course['调休'] = '第{}周 | 星期{}'.format(cweek_count, cweek)
 
                             # 节次换算时间
@@ -128,7 +128,6 @@ def task1(_vjson, name, week, week_count, cweek, cweek_count):
     data_course = {}
     data_course['用户'] = name
     return parse_class(_vjson, week, week_count, data_course, cweek, cweek_count)
-
 
 # pushplus推送-json
 def sendPushplus(token, data):
