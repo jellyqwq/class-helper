@@ -20,12 +20,6 @@ log.basicConfig(
     level=log.DEBUG,
     datefmt='%Y-%m-%d %H:%M:%S')
 
-# 协议选择
-if config['HTTPS'] == True:
-    origin = 'https://{}:{}'.format(config['Host'], config['Port'])
-else:
-    origin = 'http://{}:{}'.format(config['Host'], config['Port'])
-
 # 初始化数据库,建立数据库对象
 def load_mongodb():
     myclient = pymongo.MongoClient("mongodb://{}:{}/".format(config['MongoDBHost'], config['MongoDBPort']))
@@ -100,7 +94,7 @@ from flask import Flask, render_template, request, make_response
 # 请求头的设置
 def res(params):
     response = make_response(params)
-    response.access_control_allow_origin = origin
+    response.access_control_allow_origin = '/'
     return response
 
 app = Flask(__name__, template_folder='templates')
@@ -193,9 +187,7 @@ def signup():
                     return response
         return res({'error': '验证码超时或未发送'})
 
-# 验证码
-@app.route('/sendvcode', methods=['POST'])
-def sendvcode():
+def sendvcode(is_resetpwd=False):
     mycol, DBEXIST, COLEXIST = load_mongodb()
     try:
         email = request.form['email']
@@ -206,10 +198,18 @@ def sendvcode():
             return res({'error': '邮箱不能为空'})
         if not bool(re.match(r'^[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]+@[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]+$', email, re.I)):
             return res({'error': '邮箱不合法'})
-        # count_documents()可以计算指定元素的出现次数
-        if mycol.count_documents({'email':email}):
-            log.info('email %s was already signed up' % email)
-            return res({'error': '邮箱已存在'})
+        
+        # 检验是否为重置密码的验证码
+        if is_resetpwd == False:
+            # count_documents()可以计算指定元素的出现次数
+            if mycol.count_documents({'email':email}):
+                log.info('email %s was already signed up' % email)
+                return res({'error': '邮箱已存在'})
+        else:
+            if not mycol.count_documents({'email':email}):
+                log.info('邮箱 %s 不存在' % email)
+                return res({'error': '邮箱不存在'})
+        
         t = time.time()
         if security_code != {}: 
             for i in security_code.keys():
@@ -224,6 +224,17 @@ def sendvcode():
         security_code[time.time()] = {email:content}
         log.info('verification code sent successfully')
         return res({'result': '验证码发送成功(3分钟有效)'})
+
+# 注册时发送验证码
+@app.route('/sendvcode', methods=['POST'])
+def sendvcode_by_register():
+    return sendvcode()
+
+# 重置密码时发送的验证码
+@app.route('/sendvcode/resetpwd', methods=['POST'])
+def sendvcode_by_reset():
+    return sendvcode(True)
+
 
 # 登录
 @app.route('/users/login', methods=['POST'])
@@ -332,6 +343,57 @@ def submit():
             )
             return res({'result': '更新成功'})
 
+@app.route('/user/resetpwd', methods=['POST'])
+def reset_password():
+    mycol, DBEXIST, COLEXIST = load_mongodb()
+    try:
+        email = request.form['email']
+        password = request.form['pwd']
+        sc = request.form['sc']
+    except:
+        return res({'error': '参数错误'})
+    else:
+        # 数据校验
+        if email == '':
+            return res({'error': '邮箱不能为空'})
+        if password == '':
+            return res({'error': '密码不能为空'})
+        if sc == '':
+            return res({'error': '验证码不能为空'})
+        if not bool(re.match(r'^[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]{1,64}@[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]{3,64}$', email, re.I)):
+            return res({'error': '邮箱不合法'})
+        if not bool(re.match(r'^[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]{6,32}$', password, re.I)):
+            return res({'error': '密码不合法'})
+        if not bool(re.match(r'^[0-9a-z]+$', sc, re.I)) and len(sc) != config['VerificationCodeLenth']:
+            return res({'error': '验证码不合法'})
+        
+        # 将超时验证码删除
+        t = time.time()
+        if security_code != {}: 
+            for i in security_code.keys():
+                if int(t) - int(i) >= 180:
+                    del security_code[i]
 
-if __name__ == '__main__':
-    app.run(host='localhost', port=4443, debug=True)
+        # 密码哈希加密
+        hash_pwd = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        for k, v in security_code.items():
+            if v[email] == sc:
+
+                # count_documents()可以计算指定元素的出现次数
+                if not mycol.count_documents({'email':email}):
+                    log.info('email is exist')
+                    return res({'error': '邮箱不存在'})
+                else:
+                    mycol.update_many({'email':email},
+                    {
+                        '$set': {
+                            "email": email,
+                            "password": hash_pwd
+                        }
+                    })
+                    log.info("email (%s) succeefully reset password" % email)
+                    del security_code[k]
+                    response = res({'success': '密码重置成功'})
+                    return response
+        return res({'error': '验证码超时或未发送'})
+

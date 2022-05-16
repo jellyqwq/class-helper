@@ -5,13 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>class helper setting</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/static/config.css">
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
     <script>
         // 登出
         $(document).ready(function() {
             $("#logout").click(function(){
-                $.post('{{ orgin }}/users/logout',
+                $.post('/users/logout',
                     function(data) {
                         // console.log(data)
                         if (data.hasOwnProperty('error')) {
@@ -20,7 +21,7 @@
                         }
                         else
                         {
-                            $(location).attr('href', '{{ orgin }}/');
+                            $(location).attr('href', '/');
                             // console.log(data);
                         } 
                     }
@@ -55,7 +56,7 @@
                 }
                 
                 // 提交内容
-                $.post('{{ orgin }}/submit',
+                $.post('/submit',
                     {
                         'name': $("#user_name").val(),
                         'openid': $("#openid").val(),
@@ -108,7 +109,7 @@
                     }
                     
                     // 提交内容
-                    $.post('{{ orgin }}/submit',
+                    $.post('/submit',
                         {
                             'name': $("#user_name").val(),
                             'openid': $("#openid").val(),
@@ -134,8 +135,6 @@
             }
         });
     </script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'config.css') }}">
-    <link rel="stylesheet" type="text/css" href="../static/config.css">
 </head>
 <body>
     <div class="main-box">

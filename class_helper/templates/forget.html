@@ -4,34 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>class helper register</title>
     <link rel="shortcut icon" href="/static/favicon.ico">
-    <link rel="stylesheet" type="text/css" href="/static/register.css">
+    <link rel="stylesheet" href="/static/forget.css">
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+    <title>class helper reset password</title>
     <script>
-        // 点击登录
-        $(document).ready(function() {
-            $("#login").click(function(e){
-                // e.preventDefault();
-                // post
-                $.post('/users/login',
-                    {
-                        'email': $("#email").val(),
-                        'pwd': $("#pwd").val()
-                    },
-                    function(data) {
-                        if (data.hasOwnProperty('error')) {
-                            alert(data['error'])
-                        }
-                        else
-                        {
-                            $(location).attr('href', '/');
-                        } 
-                    }
-                )
-            })
-        });
-
         // 返回登录页
         $(document).ready(function() {
             $("#back").click(function() {
@@ -42,25 +19,31 @@
         // 校验邮箱并获取验证码
         $(document).ready(function() {
             $("#verifycode").click(function() {
-                $.post('/sendvcode',
-                {
-                    'email': $("#email").val()
-                },
-                function(data) {
-                    if (data.hasOwnProperty('error')) {
-                        alert(data['error'])
-                    }
-                    else
+                if ($("#email").val() != '') {
+                   $.post('/sendvcode/resetpwd',
                     {
-                        alert(data['result'])
-                    };
-                })
+                        'email': $("#email").val()
+                    },
+                    function(data) {
+                        if (data.hasOwnProperty('error')) {
+                            alert(data['error'])
+                        }
+                        else
+                        {
+                            alert(data['result'])
+                        };
+                    }) 
+                }
+                else
+                {
+                    alert('邮箱不能为空')
+                }
             })
         })
 
-        // 注册
+        // 密码重置
         $(document).ready(function() {
-            $("#register").click(function() {
+            $("#resetpwd").click(function() {
                 console.log($("#email").val())
                 if ($("#email").val() == '') {
                     alert('邮箱不能为空')
@@ -69,8 +52,8 @@
                 {
                     var pwd1 =  $("#pwd1").val()
                     var pwd2 = $("#pwd2").val()
-                    console.log(pwd1)
-                    console.log(pwd2)
+                    // console.log(pwd1)
+                    // console.log(pwd2)
                     if (pwd1 == '' || pwd2 == '') {
                         alert('密码不能为空')
                     }
@@ -83,7 +66,7 @@
                             }
                             else
                             {
-                                $.post('/users/signup', {
+                                $.post('/user/resetpwd', {
                                     'email': $("#email").val(),
                                     'pwd': pwd1,
                                     "sc": $("#inputverifycode").val()
@@ -115,26 +98,28 @@
         <div class="title">Class Helper</div>
         <div class="ep-box">
             <div class="flex">
-                <p>邮箱</p>
-                <input type="text" name="" id="email" placeholder="请输入邮箱" maxlength="25">
+                <p>邮箱:</p>
+                <input type="text" id="email" placeholder="请输入邮箱" maxlength="25">
             </div>
             <div class="flex">
-                <p>密码</p>
-                <input type="password" name="" id="pwd1" placeholder="请输入密码" maxlength="25" minlength="6">
+                <p>新密码:</p>
+                <input type="password" id="pwd1" placeholder="请输入新密码" maxlength="25">
             </div>
             <div class="flex">
-                <p>确认密码</p>
-                <input type="password" name="" id="pwd2" placeholder="请输入密码" maxlength="25" minlength="6">
+                <p>再次输入密码:</p>
+                <input type="password" id="pwd2" placeholder="请再次输入新密码" maxlength="25">
             </div>
             <div class="flex">
-                <p>验证码</p>
-                <input type="text" name="" id="inputverifycode" placeholder="请输入验证码">
+                <p>验证码:</p>
+                <input type="text" id="inputverifycode" placeholder="请输入验证码" maxlength="25">
             </div>
-        </div>
-        <div class="label">
-            <button id="back" class="back">返回</button>
-            <button id="verifycode" class="verifycode">获取验证码</button>
-            <button id="register" class="register">注册</button>
+            <div class="flex2">
+                <div class="label">
+                    <button id="back">返回首页</button>
+                    <button id="verifycode">发送验证码</button>
+                    <button id="resetpwd">修改密码</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>

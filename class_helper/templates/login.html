@@ -5,7 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>class helper login</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/static/login.css">
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
     <script>
         // 点击登录
@@ -13,7 +14,7 @@
             $("#login").click(function(e){
                 // e.preventDefault();
                 // post
-                $.post('{{ orgin }}/users/login',
+                $.post('/users/login',
                     {
                         'email': $("#email").val(),
                         'pwd': $("#pwd").val()
@@ -26,7 +27,7 @@
                         }
                         else
                         {
-                            $(location).attr('href', '{{ orgin }}/');
+                            $(location).attr('href', '/');
                             // console.log(data);
                         } 
                     }
@@ -37,7 +38,7 @@
         // 回车登录
         $(document).keyup(function(event){
             if (event.keyCode == 13) {
-                $.post('{{ orgin }}/users/login',
+                $.post('/users/login',
                     {
                         'email': $("#email").val(),
                         'pwd': $("#pwd").val()
@@ -50,7 +51,7 @@
                         }
                         else
                         {
-                            $(location).attr('href', '{{ orgin }}/');
+                            $(location).attr('href', '/');
                             // console.log(data);
                         } 
                     }
@@ -61,12 +62,17 @@
         // 注册跳转
         $(document).ready(function() {
             $("#signup").click(function() {
-                $(location).attr('href', '{{ orgin }}/register');
+                $(location).attr('href', '/register');
+            })
+        })
+
+        // 忘记密码
+        $(document).ready(function() {
+            $("#forget").click(function() {
+                $(location).attr('href', '/forget')
             })
         })
     </script>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'login.css') }}">
-    <link rel="stylesheet" type="text/css" href="../static/login.css">
 </head>
 <body>
     <div class="main-box">
