@@ -26,6 +26,10 @@ def index():
                 switch_telegram = 'checked'
             if info['switch_weather'] == 'true':
                 switch_weather = 'checked'
+            if info['switch_pushplus_rightnow'] == 'true':
+                switch_pushplus_rightnow = 'checked'
+            if info['switch_telegram_rightnow'] == 'true':
+                switch_telegram_rightnow = 'checked'
 
             return res(render_template('config.html',
                         user_name = info['name'],
@@ -37,6 +41,8 @@ def index():
                         switch_pushplus = switch_pushplus,
                         switch_telegram = switch_telegram,
                         switch_weather = switch_weather,
+                        switch_pushplus_rightnow = switch_pushplus_rightnow,
+                        switch_telegram_rightnow = switch_telegram_rightnow
                         ))
     else:
         return res(render_template('login.html'))

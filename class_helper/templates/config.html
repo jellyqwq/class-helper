@@ -33,26 +33,40 @@
         $(document).ready(function(){
             $("#submit").click(function(){
                 // 判断每个复选框的状态
-                if ($('#pushplus').is(':checked')) {
+                if ($('#switch_pushplus').is(':checked')) {
                     var switch_pushplus = true
                 }
                 else
                 {
                     var switch_pushplus = false
                 }
-                if ($('#telegram').is(':checked')) {
+                if ($('#switch_telegram').is(':checked')) {
                     var switch_telegram = true
                 }
                 else
                 {
                     var switch_telegram = false
                 }
-                if ($('#weather').is(':checked')) {
+                if ($('#switch_weather').is(':checked')) {
                     var switch_weather = true
                 }
                 else
                 {
                     var switch_weather = false
+                }
+                if ($('#switch_pushplus_rightnow').is(':checked')) {
+                    var switch_pushplus_rightnow = true
+                }
+                else
+                {
+                    var switch_pushplus_rightnow = false
+                }
+                if ($('#switch_telegram_rightnow').is(':checked')) {
+                    var switch_telegram_rightnow = true
+                }
+                else
+                {
+                    var switch_telegram_rightnow = false
                 }
                 
                 // 提交内容
@@ -66,7 +80,9 @@
                         'tg_user_id' : $("#tg_user_id").val(),
                         'switch_pushplus' : switch_pushplus,
                         'switch_telegram': switch_telegram,
-                        'switch_weather': switch_weather
+                        'switch_weather': switch_weather,
+                        'switch_pushplus_rightnow': switch_pushplus_rightnow,
+                        'switch_telegram_rightnow': switch_telegram_rightnow
                     },
                     function (data) {
                         if (data.hasOwnProperty('error')) {
@@ -86,26 +102,40 @@
             if (event.keyCode == 13) {
                 $("#submit").click(function(){
                     // 判断每个复选框的状态
-                    if ($('#pushplus').is(':checked')) {
+                    if ($('#switch_pushplus').is(':checked')) {
                         var switch_pushplus = true
                     }
                     else
                     {
                         var switch_pushplus = false
                     }
-                    if ($('#telegram').is(':checked')) {
+                    if ($('#switch_telegram').is(':checked')) {
                         var switch_telegram = true
                     }
                     else
                     {
                         var switch_telegram = false
                     }
-                    if ($('#weather').is(':checked')) {
+                    if ($('#switch_weather').is(':checked')) {
                         var switch_weather = true
                     }
                     else
                     {
                         var switch_weather = false
+                    }
+                    if ($('#switch_pushplus_rightnow').is(':checked')) {
+                        var switch_pushplus_rightnow = true
+                    }
+                    else
+                    {
+                        var switch_pushplus_rightnow = false
+                    }
+                    if ($('#switch_telegram_rightnow').is(':checked')) {
+                        var switch_telegram_rightnow = true
+                    }
+                    else
+                    {
+                        var switch_telegram_rightnow = false
                     }
                     
                     // 提交内容
@@ -119,7 +149,9 @@
                             'tg_user_id' : $("#tg_user_id").val(),
                             'switch_pushplus' : switch_pushplus,
                             'switch_telegram': switch_telegram,
-                            'switch_weather': switch_weather
+                            'switch_weather': switch_weather,
+                            'switch_pushplus_rightnow': switch_pushplus_rightnow,
+                            'switch_telegram_rightnow': switch_telegram_rightnow
                         },
                         function (data) {
                             if (data.hasOwnProperty('error')) {
@@ -153,15 +185,15 @@
                 <input type="text" id="xh" value="{{ xh }}">
             </div>
             <div class="flex">
-                <p>pushplustoken</p>
+                <p>pushplus token</p>
                 <input type="text" id="pushplustoken" value="{{ pushplustoken }}">
             </div>
             <div class="flex">
-                <p>tg_bot_token</p>
+                <p>telegram bot token</p>
                 <input type="text" id="tgtoken" value="{{ tgtoken }}">
             </div>
             <div class="flex">
-                <p>tg_user_id</p>
+                <p>telegram user id</p>
                 <input type="text" id="tg_user_id" value="{{ tg_user_id }}">
             </div>
 
@@ -169,15 +201,23 @@
             <div class="check">
                 <div class="check-box">
                     <div class="check-left-box">pushplus</div>
-                    <input type="checkbox" class="checkbox-right-box" id="pushplus" {{ switch_pushplus }}>
+                    <input type="checkbox" class="checkbox-right-box" id="switch_pushplus" {{ switch_pushplus }}>
+                </div>
+                <div class="check-box">
+                    <div class="check-left-box">pushplus push rightnow</div>
+                    <input type="checkbox" class="checkbox-right-box" id="switch_pushplus_rightnow" {{ switch_pushplus_rightnow }}>
                 </div>
                 <div class="check-box">
                     <div class="check-left-box">telegram</div>
-                    <input type="checkbox" class="checkbox-right-box" id="telegram" {{ switch_telegram }}>
+                    <input type="checkbox" class="checkbox-right-box" id="switch_telegram" {{ switch_telegram }}>
+                </div>
+                <div class="check-box">
+                    <div class="check-left-box">telegram push rightnow</div>
+                    <input type="checkbox" class="checkbox-right-box" id="switch_telegram_rightnow" {{ switch_telegram_rightnow }}>
                 </div>
                 <div class="check-box">
                     <div class="check-left-box">weather</div>
-                    <input type="checkbox" class="checkbox-right-box" id="weather" {{ switch_weather }}>
+                    <input type="checkbox" class="checkbox-right-box" id="switch_weather" {{ switch_weather }}>
                 </div>
             </div>
         </div>

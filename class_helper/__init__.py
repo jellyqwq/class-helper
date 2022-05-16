@@ -153,7 +153,9 @@ def signup():
                         "switch_telegram": "",
                         "switch_weather": "",
                         "telegram_bot_token": "",
-                        "telegram_user_id": ""
+                        "telegram_user_id": "",
+                        "switch_pushplus_rightnow": "",
+                        "switch_telegram_rightnow": ""
                     })
                     log.info('sign up info writed successfully: %s' % result)
                     del security_code[k]
@@ -163,7 +165,7 @@ def signup():
                 # count_documents()可以计算指定元素的出现次数
                 elif mycol.count_documents({'email':email}):
                     log.info('email is exist')
-                    return res({'error': '邮箱不存在'})
+                    return res({'error': '邮箱已存在'})
                 else:
                     result = mycol.insert_one({
                         "name": "",
@@ -177,7 +179,9 @@ def signup():
                         "switch_telegram": "",
                         "switch_weather": "",
                         "telegram_bot_token": "",
-                        "telegram_user_id": ""
+                        "telegram_user_id": "",
+                        "switch_pushplus_rightnow": "",
+                        "switch_telegram_rightnow": ""
                     })
                     log.info('sign up info writed successfully: %s' % result)
                     log.info('account created successfully\nemail: %s\npassword: %s' % (email, password))
@@ -322,6 +326,8 @@ def submit():
             switch_pushplus = request.form['switch_pushplus']
             switch_telegram = request.form['switch_telegram']
             switch_weather = request.form['switch_weather']
+            switch_pushplus_rightnow = request.form['switch_pushplus_rightnow']
+            switch_telegram_rightnow = request.form['switch_telegram_rightnow']
         except:
             return res({'error': '参数错误'})
         else:
@@ -338,9 +344,15 @@ def submit():
                         'switch_pushplus': switch_pushplus,
                         'telegram_user_id': telegram_user_id,
                         'telegram_bot_token': telegram_bot_token,
+                        'switch_pushplus_rightnow': switch_pushplus_rightnow,
+                        'switch_telegram_rightnow': switch_telegram_rightnow
                     }
                 }
             )
+            from . import daily_plan
+            back1, back2 = daily_plan.sendRightNow(sh)
+            log.info(back1)
+            log.info(back2)
             return res({'result': '更新成功'})
 
 @app.route('/user/resetpwd', methods=['POST'])

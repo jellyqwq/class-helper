@@ -104,7 +104,7 @@ def parse_class(_josn, week, week_count, data_course, cweek, cweek_count):
                         if start_week <= week_count <= end_week:
 
                             data_course['班级'] = kecheng['classname']
-                            data_course['时间'] = '第{}周 | 星期{}'.format(week_count, week)
+                            data_course['明天'] = '第{}周 | 星期{}'.format(week_count, week)
                             
                             # 调休增加的信息
                             if cweek_count != None and cweek != None:
@@ -137,11 +137,29 @@ def sendPushplus(token, data):
         "template":"json",
         "content": json.dumps(data, ensure_ascii=False)
     }
-    url = 'http://www.pushplus.plus/send'
-    r = urllibpost(url, data=data)
-    log.info(r)
-    
-def run_daily():
+    try:
+        r = urllibpost('http://www.pushplus.plus/send', data=data)
+        log.info(r)
+        return r
+    except:
+        log.error("pushplus推送失败")
+        return {"error": "pushplus推送失败"}
+
+# telegram推送
+def sendTelegram(token, chat_id, text):
+    data = {
+        "chat_id": chat_id,
+        "text": text
+    }
+    try:
+        r = urllibpost(f'https://api.telegram.org/bot{token}/sendMessage', data=data)
+        log.info("TG推送成功: %s" % r)
+        return r
+    except:
+        log.error('TG推送失败')
+        return {"error": "TG推送失败"}
+
+def sendTomorrowClass():
     from . import config, load_mongodb
     mycol, DBEXIST, COLEXIST = load_mongodb()
 
@@ -149,8 +167,14 @@ def run_daily():
     c = mycol.count_documents({})
     log.debug(c)
     if c != 0:
-        # 假期调课修正
+        # 计算第二天课表
         week, week_count = today()
+        if week == 7:
+            week = 1
+        else:
+            week += 1
+
+        # 假期调课修正
         twdo = config['TakeWorkingDaysOff']
         cweek_count = cweek = None
         if twdo != []:
@@ -162,24 +186,89 @@ def run_daily():
 
         # 遍历数据库信息
         for i in mycol.find():
+            data = {
+                'openid': i['openid'],
+                'xh': i['xh'],
+                'falg': 'true'
+            }
             
-            if i['switch_pushplus'] != '' and i['openid'] != '' and i['pushplustoken'] != '':
-
-                data = {
-                    'openid': i['openid'],
-                    'xh': i['xh'],
-                    'falg': 'true'
-                }
-                
-                url = 'http://wecat.hnkjedu.cn/kingojw/xskbjson.aspx'
-                response = urllibpost(url, headers,data)
-                if 'error' in response:
-                    log.error(response['error'])
-                elif response[0]['courseTimeXq'] == None:
-                    log.error('params openid or xh is invalid')
-                    log.debug(response)
-                else:
-                    # 此处即json的输出
-                    name = i['name']
-                    data = task1(response, name, week, week_count, cweek, cweek_count)
+            url = 'http://wecat.hnkjedu.cn/kingojw/xskbjson.aspx'
+            response = urllibpost(url, headers,data)
+            if 'error' in response:
+                log.error(response['error'])
+            elif response[0]['courseTimeXq'] == None:
+                log.error('params openid or xh is invalid')
+                log.debug(response)
+            else:
+                # 此处即json的输出
+                data = task1(response, i['name'], week, week_count, cweek, cweek_count)
+                # pushplus部分
+                if i['switch_pushplus'] == 'true' and i['openid'] != '' and i['pushplustoken'] != '':
                     sendPushplus(i['pushplustoken'], data)
+                
+                # telegram推送
+                if i['switch_telegram'] == 'true' and i['telegram_bot_token'] != '' and i['telegram_user_id'] != '':
+                    text = '课表推送助手提醒您明天的课程\n'
+                    for j in data.keys():
+                        if '|' in j:
+                            text += j + '\n'
+                            for k, v in data[j].items():
+                                text += '  ' + k + ': ' + v + '\n'
+                        else:
+                            text += j + ': ' + data[j] + '\n'
+                        log.debug(text)
+                    sendTelegram(i['telegram_bot_token'], i['telegram_user_id'], text)
+
+def sendRightNow(sh):
+    from . import config, load_mongodb
+    mycol, DBEXIST, COLEXIST = load_mongodb()
+    # 判断数据库是否为空
+    c = mycol.count_documents({})
+    log.debug(c)
+    if c != 0:
+        # 今天课表
+        week, week_count = today()
+
+        # 假期调课修正
+        twdo = config['TakeWorkingDaysOff']
+        cweek_count = cweek = None
+        if twdo != []:
+            if twdo[0] != [] and twdo[1] != []:
+                if week_count == twdo[1][0]:
+                    cweek_count = twdo[0][0]
+                if week == twdo[1][1]:
+                    cweek = twdo[0][1]
+
+        i = mycol.find_one({"sh": sh})
+        data = {
+                'openid': i['openid'],
+                'xh': i['xh'],
+                'falg': 'true'
+            }
+        url = 'http://wecat.hnkjedu.cn/kingojw/xskbjson.aspx'
+        response = urllibpost(url, headers,data)
+        if 'error' in response:
+            log.error(response['error'])
+        elif response[0]['courseTimeXq'] == None:
+            log.error('params openid or xh is invalid')
+            log.debug(response)
+        else:
+            # 此处即json的输出
+            data = task1(response, i['name'], week, week_count, cweek, cweek_count)
+            # pushplus部分
+            if i['switch_pushplus'] == 'true' and i['openid'] != '' and i['pushplustoken'] != '' and i['switch_pushplus_rightnow'] == 'true':
+                back1 = sendPushplus(i['pushplustoken'], data)
+            
+            # telegram推送
+            if i['switch_telegram'] == 'true' and i['telegram_bot_token'] != '' and i['telegram_user_id'] != '' and i['switch_telegram_rightnow'] == 'true':
+                text = '课表推送助手提醒您今天的课程\n'
+                for j in data.keys():
+                    if '|' in j:
+                        text += j + '\n'
+                        for k, v in data[j].items():
+                            text += '  ' + k + ': ' + v + '\n'
+                    else:
+                        text += j + ': ' + data[j] + '\n'
+                    log.debug(text)
+                back2 = sendTelegram(i['telegram_bot_token'], i['telegram_user_id'], text)
+            return back1, back2
