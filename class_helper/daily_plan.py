@@ -239,7 +239,8 @@ def sendRightNow(sh):
                 if week == twdo[1][1]:
                     cweek = twdo[0][1]
 
-        i = mycol.find_one({"sh": sh})
+        i = mycol.find_one({"cookie": sh})
+        log.debug('243: %s' % i)
         data = {
                 'openid': i['openid'],
                 'xh': i['xh'],
@@ -255,6 +256,7 @@ def sendRightNow(sh):
         else:
             # 此处即json的输出
             data = task1(response, i['name'], week, week_count, cweek, cweek_count)
+            back1 = back2 = None
             # pushplus部分
             if i['switch_pushplus'] == 'true' and i['openid'] != '' and i['pushplustoken'] != '' and i['switch_pushplus_rightnow'] == 'true':
                 back1 = sendPushplus(i['pushplustoken'], data)
