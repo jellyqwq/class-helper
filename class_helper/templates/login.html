@@ -8,71 +8,7 @@
     <link rel="shortcut icon" href="/static/favicon.ico">
     <link rel="stylesheet" type="text/css" href="/static/login.css">
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
-    <script>
-        // 点击登录
-        $(document).ready(function() {
-            $("#login").click(function(e){
-                // e.preventDefault();
-                // post
-                $.post('/users/login',
-                    {
-                        'email': $("#email").val(),
-                        'pwd': $("#pwd").val()
-                    },
-                    function(data) {
-                        console.log(data)
-                        if (data.hasOwnProperty('error')) {
-                            alert(data['error'])
-                            // console.log(data['error']);
-                        }
-                        else
-                        {
-                            $(location).attr('href', '/');
-                            // console.log(data);
-                        } 
-                    }
-                )
-            })
-        });
-
-        // 回车登录
-        $(document).keyup(function(event){
-            if (event.keyCode == 13) {
-                $.post('/users/login',
-                    {
-                        'email': $("#email").val(),
-                        'pwd': $("#pwd").val()
-                    },
-                    function(data) {
-                        console.log(data)
-                        if (data.hasOwnProperty('error')) {
-                            alert(data['error'])
-                            // console.log(data['error']);
-                        }
-                        else
-                        {
-                            $(location).attr('href', '/');
-                            // console.log(data);
-                        } 
-                    }
-                )
-            }
-        });
-
-        // 注册跳转
-        $(document).ready(function() {
-            $("#signup").click(function() {
-                $(location).attr('href', '/register');
-            })
-        })
-
-        // 忘记密码
-        $(document).ready(function() {
-            $("#forget").click(function() {
-                $(location).attr('href', '/forget')
-            })
-        })
-    </script>
+    <script type="text/javascript" src="/static/login.js"></script>
 </head>
 <body>
     <div class="main-box">
