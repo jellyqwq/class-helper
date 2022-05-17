@@ -409,3 +409,43 @@ def reset_password():
                     return response
         return res({'error': '验证码超时或未发送'})
 
+@app.route('/user/delete', methods=['POST'])
+def userdelete():
+    mycol, DBEXIST, COLEXIST = load_mongodb()
+    try:
+        email = request.form['email']
+        sc = request.form['sc']
+    except:
+        return res({'error': '参数错误'})
+    else:
+        # 数据校验
+        if email == '':
+            return res({'error': '邮箱不能为空'})
+        if sc == '':
+            return res({'error': '验证码不能为空'})
+        if not bool(re.match(r'^[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]{1,64}@[a-z0-9#\!%&\'$\+\-\*/=?^_`.{|}~]{3,64}$', email, re.I)):
+            return res({'error': '邮箱不合法'})
+        if not bool(re.match(r'^[0-9a-z]+$', sc, re.I)) and len(sc) != config['VerificationCodeLenth']:
+            return res({'error': '验证码不合法'})
+        
+        # 将超时验证码删除
+        t = time.time()
+        if security_code != {}: 
+            for i in security_code.keys():
+                if int(t) - int(i) >= 180:
+                    del security_code[i]
+        
+        for k, v in security_code.items():
+            if v[email] == sc:
+
+                # count_documents()可以计算指定元素的出现次数
+                if not mycol.count_documents({'email':email}):
+                    log.info('email is exist')
+                    return res({'error': '邮箱不存在'})
+                else:
+                    mycol.delete_one({'email': email})
+                    del security_code[k]
+                    log.info('账号(%s)删除成功' % email)
+                    response = res({'success': '账号删除成功'})
+                    return response
+        return res({'error': '验证码超时或未发送'})

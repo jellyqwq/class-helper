@@ -54,3 +54,7 @@ def register():
 @app.route('/forget')
 def forget():
     return res(render_template('forget.html'))
+
+@app.route('/delete')
+def delete():
+    return res(render_template('delete.html'))

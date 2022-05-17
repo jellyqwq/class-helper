@@ -97,7 +97,7 @@
             })
         });
 
-        // 回车登录
+        // 回车提交
         $(document).keyup(function(event){
             if (event.keyCode == 13) {
                 $("#submit").click(function(){
@@ -166,6 +166,13 @@
                 })
             }
         });
+        
+        // 跳转到删除页面
+        $(document).ready(function () {
+            $('#delete').click(function () {
+                $(location).attr('href', '/delete')
+            })
+        })
     </script>
 </head>
 <body>
@@ -224,6 +231,7 @@
         <div class="flex-button">
             <button id="submit" class="ts">submit</button>
             <button id="logout" class="ts">logout</button>
+            <button id="delete" class="ts">delete</button>
         </div>
     </div>
     <div class="bt">.</div>
