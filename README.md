@@ -7,6 +7,7 @@
 > http://www.hnkjedu.cn/posthome.aspx
 #### request data
 |参数|栗子|类型|说明|
+|--|--|--|--|
 |id|374|int|领导讲话id|
 |type|news|str||
 |cid|1|int|获取的条数|
@@ -34,6 +35,7 @@
 > http://www.hnkjedu.cn/posthome.aspx
 #### request data
 |参数|栗子|类型|说明|
+|--|--|--|--|
 |id|12|int|海科新闻id|
 |type|news|str||
 |cid|1|int|获取的条数|
