@@ -1,6 +1,17 @@
 # class-helper
 主要是用来提醒上课的个性化工具
 
+# 2022.5.22-00:37
+数据库命名空间: 
+|cn|mongodb|
+|-|-|
+|海科新闻|data_hkxw|
+|通知公告|data_tzgg|
+|媒体报道|data_mtbd|
+|领导谈话|data_ldth|
+|教务通知|data_jwtz|
+|科研通知|data_kytz|
+
 # 2022.5.21-23:10
 ## API说明
 ### 领导讲话
