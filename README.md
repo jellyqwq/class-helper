@@ -68,7 +68,7 @@
 #### request data
 |参数|栗子|类型|说明|
 |--|--|--|--|
-|id|12|int|通知公告id|
+|id|22|int|通知公告id|
 |type|news|str||
 |cid|2|int|获取的条数|
 |count|26|int|暂不明确|
