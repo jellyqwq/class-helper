@@ -62,10 +62,10 @@ class HK:
         self.data_tzgg = self._template(22)
         return self.data_tzgg
     
-    def ldjh(self):
-        """领导讲话"""
-        self.data_ldjh = self._template(374)
-        return self.data_ldjh
+    def ldth(self):
+        """领导谈话"""
+        self.data_ldth = self._template(374)
+        return self.data_ldth
     
     def jwtz(self):
         """教务通知"""
@@ -101,7 +101,7 @@ class HK:
         self.data_hkxw = self.hkxw()
         self.data_tzgg = self.tzgg()
         self.data_mtbd = self.mtbd()
-        self.data_ldjh = self.ldjh()
+        self.data_ldth = self.ldth()
         self.data_jwtz = self.jwtz()
         self.data_kytz = self.kytz()
 
@@ -110,6 +110,6 @@ if __name__ == '__main__':
     print(hk.data_hkxw)
     print(hk.data_tzgg)
     print(hk.data_mtbd)
-    print(hk.data_ldjh)
+    print(hk.data_ldth)
     print(hk.data_jwtz)
     print(hk.data_kytz)
