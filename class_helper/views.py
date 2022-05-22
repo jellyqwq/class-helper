@@ -19,7 +19,8 @@ def index():
         else:
             info = mycol.find_one({'cookie':sh})
             # 功能开关状态
-            switch_pushplus = switch_telegram = switch_weather = switch_pushplus_rightnow = switch_telegram_rightnow = ''
+            switch_pushplus = switch_telegram = switch_weather = switch_pushplus_rightnow = switch_telegram_rightnow\
+                 = data_hkxw = data_tzgg = data_mtbd = data_ldth = data_jwtz = data_kytz = ''
             if info['switch_pushplus'] == 'true':
                 switch_pushplus = 'checked'
             if info['switch_telegram'] == 'true':
