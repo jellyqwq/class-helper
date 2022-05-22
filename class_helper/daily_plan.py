@@ -159,44 +159,61 @@ def sendTelegram(token, chat_id, text):
         log.error('TG推送失败')
         return {"error": "TG推送失败"}
 
-def addNews(i, hk, text):
+def addNews(i, hk, text, html=None):
     # 海科新闻
     if i['data_hkxw'] == 'true':
-        text += '海科新闻   %s' % hk.data_hkxw[0]['News_time']
+        text += '海科新闻   %s' % hk.data_hkxw[0]['News_time'] + '\n'
         for x in hk.data_hkxw:
-            text += '  └─ ' + x['News_titleall'] + '\n'
-            text += '  └─ ' + x['News_url'] + '\n'
+            if html:
+                text += '  └─ ' + '<a href="%s">%s</a> \n' % (x['News_url'], x['News_titleall'])
+            else:
+                text += '  └─ ' + x['News_titleall'] + '\n'
+                text += '  └─ ' + x['News_url'] + '\n'
     # 通知公告
     if i['data_tzgg'] == 'true':
-        text += '通知公告   %s' % hk.data_tzgg[0]['News_time']
+        text += '通知公告   %s' % hk.data_tzgg[0]['News_time'] + '\n'
         for x in hk.data_tzgg:
-            text += '  └─ ' + x['News_titleall'] + '\n'
-            text += '  └─ ' + x['News_url'] + '\n'
+            if html:
+                text += '  └─ ' + '<a href="%s">%s</a> \n' % (x['News_url'], x['News_titleall'])
+            else:
+                text += '  └─ ' + x['News_titleall'] + '\n'
+                text += '  └─ ' + x['News_url'] + '\n'
     # 媒体报道
     if i['data_mtbd'] == 'true':
-        text += '媒体报道   %s' % hk.data_mtbd[0]['News_time']
+        text += '媒体报道   %s' % hk.data_mtbd[0]['News_time'] + '\n'
         for x in hk.data_mtbd:
-            text += '  └─ ' + x['News_titleall'] + '\n'
-            text += '  └─ ' + x['News_url'] + '\n'
+            if html:
+                text += '  └─ ' + '<a href="%s">%s</a> \n' % (x['News_url'], x['News_titleall'])
+            else:
+                text += '  └─ ' + x['News_titleall'] + '\n'
+                text += '  └─ ' + x['News_url'] + '\n'
     # 领导谈话
     if i['data_ldth'] == 'true':
-        text += '领导讲话   %s' % hk.data_ldth[0]['News_time']
+        text += '领导讲话   %s' % hk.data_ldth[0]['News_time'] + '\n'
         for x in hk.data_ldth:
-            text += '  └─ ' + x['News_titleall'] + '\n'
-            text += '  └─ ' + x['News_url'] + '\n'
+            if html:
+                text += '  └─ ' + '<a href="%s">%s</a> \n' % (x['News_url'], x['News_titleall'])
+            else:
+                text += '  └─ ' + x['News_titleall'] + '\n'
+                text += '  └─ ' + x['News_url'] + '\n'
     # 教务通知
     if i['data_jwtz'] == 'true':
-        text += '教务通知   %s' % hk.data_jwtz[0]['News_time']
+        text += '教务通知   %s' % hk.data_jwtz[0]['News_time'] + '\n'
         for x in hk.data_jwtz:
-            text += '  └─ ' + x['News_titleall'] + '\n'
-            text += '  └─ ' + x['News_url'] + '\n'
+            if html:
+                text += '  └─ ' + '<a href="%s">%s</a> \n' % (x['News_url'], x['News_titleall'])
+            else:
+                text += '  └─ ' + x['News_titleall'] + '\n'
+                text += '  └─ ' + x['News_url'] + '\n'
     # 科研通知
     if i['data_kytz'] == 'true':
-        text += '科研通知   %s' % hk.data_kytz[0]['News_time']
+        text += '科研通知   %s' % hk.data_kytz[0]['News_time'] + '\n'
         for x in hk.data_kytz:
-            text += '  └─ ' + x['News_titleall'] + '\n'
-            text += '  └─ ' + x['News_url'] + '\n'
-    
+            if html:
+                text += '  └─ ' + '<a href="%s">%s</a> \n' % (x['News_url'], x['News_titleall'])
+            else:
+                text += '  └─ ' + x['News_titleall'] + '\n'
+                text += '  └─ ' + x['News_url'] + '\n'
     return text
 
 def sendTomorrowClass():
@@ -256,7 +273,7 @@ def sendTomorrowClass():
                                 text += '  └─ ' + k + ': ' + v + '\n'
                         else:
                             text += j + ': ' + data[j] + '\n'
-                    text = addNews(i, hk, text)
+                    text = addNews(i, hk, text, True)
                     sendPushplus(i['pushplustoken'], text)
                 
                 # telegram推送
@@ -326,7 +343,7 @@ def sendRightNow(sh):
                             text += '  └─ ' + k + ': ' + v + '\n'
                     else:
                         text += j + ': ' + data[j] + '\n'
-                text = addNews(i, hk, text)
+                text = addNews(i, hk, text, True)
                 back1 = sendPushplus(i['pushplustoken'], text)
             
             # telegram推送
