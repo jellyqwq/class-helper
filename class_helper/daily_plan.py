@@ -178,21 +178,21 @@ def addNews(i, hk, text):
         for x in hk.data_mtbd:
             text += '  └─ ' + x['News_titleall'] + '\n'
             text += '  └─ ' + x['News_url'] + '\n'
-    # 领导讲话
+    # 领导谈话
     if i['data_ldth'] == 'true':
-        text += '领导讲话   %s' % i[0]['News_time']
-        for x in hk.data_ltjh:
+        text += '领导讲话   %s' % hk.data_ldth[0]['News_time']
+        for x in hk.data_ldth:
             text += '  └─ ' + x['News_titleall'] + '\n'
             text += '  └─ ' + x['News_url'] + '\n'
     # 教务通知
     if i['data_jwtz'] == 'true':
-        text += '教务通知   %s' % i[0]['News_time']
+        text += '教务通知   %s' % hk.data_jwtz[0]['News_time']
         for x in hk.data_jwtz:
             text += '  └─ ' + x['News_titleall'] + '\n'
             text += '  └─ ' + x['News_url'] + '\n'
     # 科研通知
     if i['data_kytz'] == 'true':
-        text += '科研通知   %s' % i[0]['News_time']
+        text += '科研通知   %s' % hk.data_kytz[0]['News_time']
         for x in hk.data_kytz:
             text += '  └─ ' + x['News_titleall'] + '\n'
             text += '  └─ ' + x['News_url'] + '\n'
