@@ -179,9 +179,9 @@ def addNews(i, hk, text):
             text += '  └─ ' + x['News_titleall'] + '\n'
             text += '  └─ ' + x['News_url'] + '\n'
     # 领导讲话
-    if i['data_ldjh'] == 'true':
+    if i['data_ldth'] == 'true':
         text += '领导讲话   %s' % i[0]['News_time']
-        for x in hk.data_ldjh:
+        for x in hk.data_ltjh:
             text += '  └─ ' + x['News_titleall'] + '\n'
             text += '  └─ ' + x['News_url'] + '\n'
     # 教务通知
