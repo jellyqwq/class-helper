@@ -57,6 +57,49 @@ $(document).ready(function(){
         {
             var switch_telegram_rightnow = false
         }
+        if ($('#data_hkxw').is(':checked')) {
+            var data_hkxw = true
+        }
+        else
+        {
+            var data_hkxw = false
+        }
+        if ($('#data_tzgg').is(':checked')) {
+            var data_tzgg = true
+        }
+        else
+        {
+            var data_tzgg = false
+        }
+        if ($('#data_mtbd').is(':checked')) {
+            var data_mtbd = true
+        }
+        else
+        {
+            var data_mtbd = false
+        }
+        if ($('#data_ldth').is(':checked')) {
+            var data_ldth = true
+        }
+        else
+        {
+            var data_ldth = false
+        }
+        if ($('#data_jwtz').is(':checked')) {
+            var data_jwtz = true
+        }
+        else
+        {
+            var data_jwtz = false
+        }
+        if ($('#data_kytz').is(':checked')) {
+            var data_kytz = true
+        }
+        else
+        {
+            var data_kytz = false
+        }
+
         
         // 提交内容
         $.post('/submit',
@@ -71,7 +114,13 @@ $(document).ready(function(){
                 'switch_telegram': switch_telegram,
                 'switch_weather': switch_weather,
                 'switch_pushplus_rightnow': switch_pushplus_rightnow,
-                'switch_telegram_rightnow': switch_telegram_rightnow
+                'switch_telegram_rightnow': switch_telegram_rightnow,
+                'data_hkxw': data_hkxw,
+                'data_tzgg': data_tzgg,
+                'data_mtbd': data_mtbd,
+                'data_ldth': data_ldth,
+                'data_jwtz': data_jwtz,
+                'data_kytz': data_kytz
             },
             function (data) {
                 if (data.hasOwnProperty('error')) {
@@ -126,6 +175,48 @@ $(document).keyup(function(event){
             {
                 var switch_telegram_rightnow = false
             }
+            if ($('#data_hkxw').is(':checked')) {
+                var data_hkxw = true
+            }
+            else
+            {
+                var data_hkxw = false
+            }
+            if ($('#data_tzgg').is(':checked')) {
+                var data_tzgg = true
+            }
+            else
+            {
+                var data_tzgg = false
+            }
+            if ($('#data_mtbd').is(':checked')) {
+                var data_mtbd = true
+            }
+            else
+            {
+                var data_mtbd = false
+            }
+            if ($('#data_ldth').is(':checked')) {
+                var data_ldth = true
+            }
+            else
+            {
+                var data_ldth = false
+            }
+            if ($('#data_jwtz').is(':checked')) {
+                var data_jwtz = true
+            }
+            else
+            {
+                var data_jwtz = false
+            }
+            if ($('#data_kytz').is(':checked')) {
+                var data_kytz = true
+            }
+            else
+            {
+                var data_kytz = false
+            }
             
             // 提交内容
             $.post('/submit',
@@ -140,7 +231,13 @@ $(document).keyup(function(event){
                     'switch_telegram': switch_telegram,
                     'switch_weather': switch_weather,
                     'switch_pushplus_rightnow': switch_pushplus_rightnow,
-                    'switch_telegram_rightnow': switch_telegram_rightnow
+                    'switch_telegram_rightnow': switch_telegram_rightnow,
+                    'data_hkxw': data_hkxw,
+                    'data_tzgg': data_tzgg,
+                    'data_mtbd': data_mtbd,
+                    'data_ldth': data_ldth,
+                    'data_jwtz': data_jwtz,
+                    'data_kytz': data_kytz
                 },
                 function (data) {
                     if (data.hasOwnProperty('error')) {

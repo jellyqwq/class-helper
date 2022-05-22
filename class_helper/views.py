@@ -30,6 +30,18 @@ def index():
                 switch_pushplus_rightnow = 'checked'
             if info['switch_telegram_rightnow'] == 'true':
                 switch_telegram_rightnow = 'checked'
+            if info['data_hkxw'] == 'true':
+                data_hkxw = 'checked'
+            if info['data_tzgg'] == 'true':
+                data_tzgg = 'checked'
+            if info['data_mtbd'] == 'true':
+                data_mtbd = 'checked'
+            if info['data_ldth'] == 'true':
+                data_ldth = 'checked'
+            if info['data_jwtz'] == 'true':
+                data_jwtz = 'checked'
+            if info['data_kytz'] == 'true':
+                data_kytz = 'checked'
 
             return res(render_template('config.html',
                         user_name = info['name'],
@@ -42,7 +54,13 @@ def index():
                         switch_telegram = switch_telegram,
                         switch_weather = switch_weather,
                         switch_pushplus_rightnow = switch_pushplus_rightnow,
-                        switch_telegram_rightnow = switch_telegram_rightnow
+                        switch_telegram_rightnow = switch_telegram_rightnow,
+                        data_hkxw = data_hkxw,
+                        data_tzgg = data_tzgg,
+                        data_mtbd = data_mtbd,
+                        data_ldth = data_ldth,
+                        data_jwtz = data_jwtz,
+                        data_kytz = data_kytz
                         ))
     else:
         return res(render_template('login.html'))

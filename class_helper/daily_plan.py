@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 import urllib.request
 import urllib.parse
-import json
+import json 
 from .__init__ import log
 
 headers = {
@@ -129,13 +129,13 @@ def task1(_vjson, name, week, week_count, cweek, cweek_count):
     data_course['用户'] = name
     return parse_class(_vjson, week, week_count, data_course, cweek, cweek_count)
 
-# pushplus推送-json
-def sendPushplus(token, data):
+# pushplus推送-default
+def sendPushplus(token, text):
     data = {
         "token": token,
         "title":"课表小助手提醒",
-        "template":"json",
-        "content": json.dumps(data, ensure_ascii=False)
+        "template":"html",
+        "content": text
     }
     try:
         r = urllibpost('http://www.pushplus.plus/send', data=data)
@@ -158,6 +158,46 @@ def sendTelegram(token, chat_id, text):
     except:
         log.error('TG推送失败')
         return {"error": "TG推送失败"}
+
+def addNews(i, hk, text):
+    # 海科新闻
+    if i['data_hkxw'] == 'true':
+        text += '海科新闻   %s' % hk.data_hkxw[0]['News_time']
+        for x in hk.data_hkxw:
+            text += '  └─ ' + x['News_titleall'] + '\n'
+            text += '  └─ ' + x['News_url'] + '\n'
+    # 通知公告
+    if i['data_tzgg'] == 'true':
+        text += '通知公告   %s' % hk.data_tzgg[0]['News_time']
+        for x in hk.data_tzgg:
+            text += '  └─ ' + x['News_titleall'] + '\n'
+            text += '  └─ ' + x['News_url'] + '\n'
+    # 媒体报道
+    if i['data_mtbd'] == 'true':
+        text += '媒体报道   %s' % hk.data_mtbd[0]['News_time']
+        for x in hk.data_mtbd:
+            text += '  └─ ' + x['News_titleall'] + '\n'
+            text += '  └─ ' + x['News_url'] + '\n'
+    # 领导讲话
+    if i['data_ldjh'] == 'true':
+        text += '领导讲话   %s' % i[0]['News_time']
+        for x in hk.data_ldjh:
+            text += '  └─ ' + x['News_titleall'] + '\n'
+            text += '  └─ ' + x['News_url'] + '\n'
+    # 教务通知
+    if i['data_jwtz'] == 'true':
+        text += '教务通知   %s' % i[0]['News_time']
+        for x in hk.data_jwtz:
+            text += '  └─ ' + x['News_titleall'] + '\n'
+            text += '  └─ ' + x['News_url'] + '\n'
+    # 科研通知
+    if i['data_kytz'] == 'true':
+        text += '科研通知   %s' % i[0]['News_time']
+        for x in hk.data_kytz:
+            text += '  └─ ' + x['News_titleall'] + '\n'
+            text += '  └─ ' + x['News_url'] + '\n'
+    
+    return text
 
 def sendTomorrowClass():
     from . import config, load_mongodb
@@ -184,6 +224,10 @@ def sendTomorrowClass():
                 if week == twdo[1][1]:
                     cweek = twdo[0][1]
 
+        # 海科官网信息的对象获取
+        from .hknews import HK
+        hk = HK()
+
         # 遍历数据库信息
         for i in mycol.find():
             data = {
@@ -204,19 +248,29 @@ def sendTomorrowClass():
                 data = task1(response, i['name'], week, week_count, cweek, cweek_count)
                 # pushplus部分
                 if i['switch_pushplus'] == 'true' and i['openid'] != '' and i['pushplustoken'] != '':
-                    sendPushplus(i['pushplustoken'], data)
-                
-                # telegram推送
-                if i['switch_telegram'] == 'true' and i['telegram_bot_token'] != '' and i['telegram_user_id'] != '':
-                    text = '课表推送助手提醒您明天的课程\n'
+                    text = '课表推送助手\n'
                     for j in data.keys():
                         if '|' in j:
                             text += j + '\n'
                             for k, v in data[j].items():
-                                text += '  ' + k + ': ' + v + '\n'
+                                text += '  └─ ' + k + ': ' + v + '\n'
                         else:
                             text += j + ': ' + data[j] + '\n'
-                        log.debug(text)
+                    text = addNews(i, hk, text)
+                    sendPushplus(i['pushplustoken'], text)
+                
+                # telegram推送
+                if i['switch_telegram'] == 'true' and i['telegram_bot_token'] != '' and i['telegram_user_id'] != '':
+                    text = '课表推送助手\n'
+                    for j in data.keys():
+                        if '|' in j:
+                            text += j + '\n'
+                            for k, v in data[j].items():
+                                text += '  └─ ' + k + ': ' + v + '\n'
+                        else:
+                            text += j + ': ' + data[j] + '\n'
+                    text = addNews(i, hk, text)
+                    log.debug(text)
                     sendTelegram(i['telegram_bot_token'], i['telegram_user_id'], text)
 
 def sendRightNow(sh):
@@ -225,6 +279,11 @@ def sendRightNow(sh):
     # 判断数据库是否为空
     c = mycol.count_documents({})
     log.debug(c)
+    
+    # 海科官网信息的对象获取
+    from .hknews import HK
+    hk = HK()
+
     if c != 0:
         # 今天课表
         week, week_count = today()
@@ -259,18 +318,28 @@ def sendRightNow(sh):
             back1 = back2 = None
             # pushplus部分
             if i['switch_pushplus'] == 'true' and i['openid'] != '' and i['pushplustoken'] != '' and i['switch_pushplus_rightnow'] == 'true':
-                back1 = sendPushplus(i['pushplustoken'], data)
-            
-            # telegram推送
-            if i['switch_telegram'] == 'true' and i['telegram_bot_token'] != '' and i['telegram_user_id'] != '' and i['switch_telegram_rightnow'] == 'true':
-                text = '课表推送助手提醒您今天的课程\n'
+                text = '课表推送助手\n'
                 for j in data.keys():
                     if '|' in j:
                         text += j + '\n'
                         for k, v in data[j].items():
-                            text += '  ' + k + ': ' + v + '\n'
+                            text += '  └─ ' + k + ': ' + v + '\n'
                     else:
                         text += j + ': ' + data[j] + '\n'
-                    log.debug(text)
+                text = addNews(i, hk, text)
+                back1 = sendPushplus(i['pushplustoken'], text)
+            
+            # telegram推送
+            if i['switch_telegram'] == 'true' and i['telegram_bot_token'] != '' and i['telegram_user_id'] != '' and i['switch_telegram_rightnow'] == 'true':
+                text = '课表推送助手\n'
+                for j in data.keys():
+                    if '|' in j:
+                        text += j + '\n'
+                        for k, v in data[j].items():
+                            text += '  └─ ' + k + ': ' + v + '\n'
+                    else:
+                        text += j + ': ' + data[j] + '\n'
+                text = addNews(i, hk, text)
+                log.debug(text)
                 back2 = sendTelegram(i['telegram_bot_token'], i['telegram_user_id'], text)
             return back1, back2

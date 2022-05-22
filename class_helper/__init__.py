@@ -155,7 +155,13 @@ def signup():
                         "telegram_bot_token": "",
                         "telegram_user_id": "",
                         "switch_pushplus_rightnow": "",
-                        "switch_telegram_rightnow": ""
+                        "switch_telegram_rightnow": "",
+                        "data_hkxw": "",
+                        "data_tzgg": "",
+                        "data_mtbd": "",
+                        "data_ldth": "",
+                        "data_jwtz": "",
+                        "data_kytz": ""
                     })
                     log.info('sign up info writed successfully: %s' % result)
                     del security_code[k]
@@ -181,7 +187,13 @@ def signup():
                         "telegram_bot_token": "",
                         "telegram_user_id": "",
                         "switch_pushplus_rightnow": "",
-                        "switch_telegram_rightnow": ""
+                        "switch_telegram_rightnow": "",
+                        "data_hkxw": "",
+                        "data_tzgg": "",
+                        "data_mtbd": "",
+                        "data_ldth": "",
+                        "data_jwtz": "",
+                        "data_kytz": ""
                     })
                     log.info('sign up info writed successfully: %s' % result)
                     log.info('account created successfully\nemail: %s\npassword: %s' % (email, password))
@@ -328,6 +340,12 @@ def submit():
             switch_weather = request.form['switch_weather']
             switch_pushplus_rightnow = request.form['switch_pushplus_rightnow']
             switch_telegram_rightnow = request.form['switch_telegram_rightnow']
+            data_hkxw = request.form["data_hkxw"]
+            data_tzgg = request.form["data_tzgg"]
+            data_mtbd = request.form["data_mtbd"]
+            data_ldth = request.form["data_ldth"]
+            data_jwtz = request.form["data_jwtz"]
+            data_kytz = request.form["data_kytz"]
         except:
             return res({'error': '参数错误'})
         else:
@@ -345,7 +363,13 @@ def submit():
                         'telegram_user_id': telegram_user_id,
                         'telegram_bot_token': telegram_bot_token,
                         'switch_pushplus_rightnow': switch_pushplus_rightnow,
-                        'switch_telegram_rightnow': switch_telegram_rightnow
+                        'switch_telegram_rightnow': switch_telegram_rightnow,
+                        'data_hkxw': data_hkxw,
+                        'data_tzgg': data_tzgg,
+                        'data_mtbd': data_mtbd,
+                        'data_ldth': data_ldth,
+                        'data_jwtz': data_jwtz,
+                        'data_kytz': data_kytz
                     }
                 }
             )
