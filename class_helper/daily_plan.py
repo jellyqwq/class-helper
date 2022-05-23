@@ -103,6 +103,24 @@ def parse_class(_josn, week, week_count, data_course, cweek, cweek_count):
                             start_week = end_week = int(wl)
                         if start_week <= week_count <= end_week:
 
+                            # 插入单双周课程判断
+                            if kecheng['dsz'] == '0':
+                                pass
+                            else:
+                                dsz = week_count % 2
+                                # 单周线 >> dsz=1
+                                if dsz:
+                                    if kecheng['dsz'] == '1':
+                                        pass
+                                    else:
+                                        continue
+                                # 双周线 >> dsz=0
+                                else:
+                                    if kecheng['dsz'] == '2':
+                                        pass
+                                    else:
+                                        continue
+
                             data_course['班级'] = kecheng['classname']
                             data_course['明天'] = '第{}周 | 星期{}'.format(week_count, week)
                             
@@ -228,6 +246,7 @@ def sendTomorrowClass():
         week, week_count = today()
         if week == 7:
             week = 1
+            week_count += 1
         else:
             week += 1
 
