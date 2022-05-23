@@ -361,7 +361,7 @@ def sendRightNow(sh):
                         for k, v in data[j].items():
                             text += '  └─ ' + k + ': ' + v + '\n'
                     else:
-                        text += j + ': ' + data[j] + '\n'
+                        text += j.replace('明天', '今天') + ': ' + data[j] + '\n'
                 text = addNews(i, hk, text, True)
                 back1 = sendPushplus(i['pushplustoken'], text)
             
@@ -374,7 +374,7 @@ def sendRightNow(sh):
                         for k, v in data[j].items():
                             text += '  └─ ' + k + ': ' + v + '\n'
                     else:
-                        text += j + ': ' + data[j] + '\n'
+                        text += j.replace('明天', '今天') + ': ' + data[j] + '\n'
                 text = addNews(i, hk, text)
                 log.debug(text)
                 back2 = sendTelegram(i['telegram_bot_token'], i['telegram_user_id'], text)
