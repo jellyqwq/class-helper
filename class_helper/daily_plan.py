@@ -72,7 +72,7 @@ def parse_class(_josn, week, week_count, data_course, cweek, cweek_count):
         8: "17:35",
         9: "19:10",
         10: "20:05",
-        11: "21:00"
+        11: "21:00",
     }
     Jctotime_end = {
         1: "9:00",
@@ -130,8 +130,14 @@ def parse_class(_josn, week, week_count, data_course, cweek, cweek_count):
 
                             # 节次换算时间
                             Jc = courseTimeJc.split('-')
-                            start_time = Jctotime_start[int(Jc[0])]
-                            end_time = Jctotime_end[int(Jc[1])]
+                            try:
+                                start_time = Jctotime_start[int(Jc[0])]
+                            except:
+                                start_time = '怎么还有课?'
+                            try:
+                                end_time = Jctotime_end[int(Jc[1])]
+                            except:
+                                end_time = Jc[0] + Jc[1]
                             result_time = courseTimeJc + ' | ' + start_time + '-' + end_time
 
                             data_course[result_time] = {
